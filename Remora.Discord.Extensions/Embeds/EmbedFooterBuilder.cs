@@ -4,7 +4,7 @@
 //  Author:
 //       Jarl Gullberg <jarl.gullberg@gmail.com>
 //
-//  Copyright (c) 2017 Jarl Gullberg
+//  Copyright (c) Jarl Gullberg
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -76,9 +76,7 @@ public sealed class EmbedFooterBuilder : BuilderBase<EmbedFooter>
         }
 
         var urlValidationResult = ValidateUrl(nameof(this.IconUrl), this.IconUrl, true);
-        return !urlValidationResult.IsSuccess
-            ? urlValidationResult
-            : Result.FromSuccess();
+        return urlValidationResult;
     }
 
     /// <summary>

@@ -4,7 +4,7 @@
 //  Author:
 //       Jarl Gullberg <jarl.gullberg@gmail.com>
 //
-//  Copyright (c) 2017 Jarl Gullberg
+//  Copyright (c) Jarl Gullberg
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -27,11 +27,14 @@ using System.Text.Json;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Remora.Discord.Gateway.Responders;
 using Remora.Discord.Gateway.Services;
 using Remora.Discord.Gateway.Transport;
+using Remora.Discord.Rest;
 using Remora.Discord.Rest.Extensions;
+using Remora.Extensions.Options.Immutable;
 
 namespace Remora.Discord.Gateway.Extensions;
 
@@ -46,15 +49,21 @@ public static class ServiceCollectionExtensions
     /// </summary>
     /// <param name="serviceCollection">The service collection.</param>
     /// <param name="tokenFactory">A function that retrieves the bot token.</param>
+    /// <param name="buildClient">Extra options to configure the rest client.</param>
     /// <returns>The service collection, with the services added.</returns>
     public static IServiceCollection AddDiscordGateway
     (
         this IServiceCollection serviceCollection,
-        Func<IServiceProvider, string> tokenFactory
+        Func<IServiceProvider, string> tokenFactory,
+        Action<IHttpClientBuilder>? buildClient = null
     )
     {
         serviceCollection
-            .AddDiscordRest(tokenFactory);
+            .AddDiscordRest
+            (
+                s => (tokenFactory(s), DiscordTokenType.Bot),
+                buildClient
+            );
 
         serviceCollection.TryAddSingleton<Random>();
         serviceCollection.TryAddSingleton<ResponderDispatchService>();
@@ -65,8 +74,11 @@ public static class ServiceCollectionExtensions
         serviceCollection.TryAddTransient<IPayloadTransportService>(s => new WebSocketPayloadTransportService
         (
             s,
-            s.GetRequiredService<IOptionsMonitor<JsonSerializerOptions>>().Get("Discord")
+            s.GetRequiredService<IOptionsMonitor<JsonSerializerOptions>>().Get("Discord"),
+            s.GetRequiredService<ILogger<WebSocketPayloadTransportService>>()
         ));
+
+        serviceCollection.Configure<ResponderDispatchOptions>(() => new());
 
         return serviceCollection;
     }
@@ -79,7 +91,11 @@ public static class ServiceCollectionExtensions
     /// <param name="group">The group the responder belongs to.</param>
     /// <typeparam name="TResponder">The concrete responder type.</typeparam>
     /// <returns>The service collection, with the responder added.</returns>
-    public static IServiceCollection AddResponder<TResponder>
+    public static IServiceCollection AddResponder
+        <
+            [MeansImplicitUse(ImplicitUseKindFlags.InstantiatedNoFixedConstructorSignature)]
+            TResponder
+        >
     (
         this IServiceCollection serviceCollection,
         ResponderGroup group = ResponderGroup.Normal

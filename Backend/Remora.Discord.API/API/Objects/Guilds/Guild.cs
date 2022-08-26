@@ -4,7 +4,7 @@
 //  Author:
 //       Jarl Gullberg <jarl.gullberg@gmail.com>
 //
-//  Copyright (c) 2017 Jarl Gullberg
+//  Copyright (c) Jarl Gullberg
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -57,15 +57,6 @@ public record Guild
     Snowflake? SystemChannelID,
     SystemChannelFlags SystemChannelFlags,
     Snowflake? RulesChannelID,
-    Optional<DateTimeOffset> JoinedAt,
-    Optional<bool> IsLarge,
-    Optional<bool> IsUnavailable,
-    Optional<int> MemberCount,
-    Optional<IReadOnlyList<IPartialVoiceState>> VoiceStates,
-    Optional<IReadOnlyList<IGuildMember>> Members,
-    Optional<IReadOnlyList<IChannel>> Channels,
-    Optional<IReadOnlyList<IChannel>> Threads,
-    Optional<IReadOnlyList<IPartialPresence>> Presences,
     Optional<int?> MaxPresences,
     Optional<int> MaxMembers,
     string? VanityUrlCode,
@@ -80,8 +71,6 @@ public record Guild
     Optional<int> ApproximatePresenceCount,
     Optional<IWelcomeScreen> WelcomeScreen,
     GuildNSFWLevel NSFWLevel,
-    Optional<IReadOnlyList<IStageInstance>> StageInstances,
     Optional<IReadOnlyList<ISticker>> Stickers,
-    Optional<IReadOnlyList<IGuildScheduledEvent>> GuildScheduledEvents,
     bool IsPremiumProgressBarEnabled
 ) : IGuild;

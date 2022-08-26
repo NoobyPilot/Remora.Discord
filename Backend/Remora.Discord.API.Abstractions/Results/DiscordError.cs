@@ -4,7 +4,7 @@
 //  Author:
 //       Jarl Gullberg <jarl.gullberg@gmail.com>
 //
-//  Copyright (c) 2017 Jarl Gullberg
+//  Copyright (c) Jarl Gullberg
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -37,7 +37,7 @@ public enum DiscordError
     Unknown = -1,
 
     /// <summary>
-    /// A general error (suc as a malformed request body, amongst other things).
+    /// A general error (such as a malformed request body, amongst other things).
     /// </summary>
     GeneralError = 0,
 
@@ -282,6 +282,11 @@ public enum DiscordError
     EditingNotAllowedDueToAnnouncementRateLimits = 20022,
 
     /// <summary>
+    /// The user is below the minimum required age for the attempted operation.
+    /// </summary>
+    UnderMinimumAge = 20024,
+
+    /// <summary>
     /// The channel you are writing to has hit the write rate limit.
     /// </summary>
     WriteRateLimitHit = 20028,
@@ -377,9 +382,19 @@ public enum DiscordError
     GuildAlreadyHasATemplate = 30031,
 
     /// <summary>
+    /// The maximum number of registered application commands has been reached.
+    /// </summary>
+    MaximumNumberOfApplicationCommandsReached = 30032,
+
+    /// <summary>
     /// The maximum number of participants in a thread has been reached (1000).
     /// </summary>
     MaxNumberOfThreadParticipantsReached = 30033,
+
+    /// <summary>
+    /// The maximum number of application command create calls has been reached (200).
+    /// </summary>
+    MaxNumberOfDailyApplicationCommandCreationsReached = 30034,
 
     /// <summary>
     /// The maximum number of bans for non-guild members has been exceeded.
@@ -417,6 +432,21 @@ public enum DiscordError
     MaxNumberOfEditsToMessagesOlderThanOneHourReached = 30046,
 
     /// <summary>
+    /// The maximum number of pinned threads in the forum channel has been reached.
+    /// </summary>
+    MaxNumberOfPinnedThreadsInForumChannelReached = 30047,
+
+    /// <summary>
+    /// The maximum number of tags in the forum channel has been reached.
+    /// </summary>
+    MaxNumberOfTagsInForumChannelReached = 30048,
+
+    /// <summary>
+    /// The requested bitrate is too high for a channel of this type.
+    /// </summary>
+    BitrateTooHighForChannelType = 30052,
+
+    /// <summary>
     /// Unauthorized. Provide a valid token and try again.
     /// </summary>
     Unauthorized = 40001,
@@ -452,6 +482,11 @@ public enum DiscordError
     UserBanned = 40007,
 
     /// <summary>
+    /// The connection has been revoked.
+    /// </summary>
+    ConnectionRevoked = 40012,
+
+    /// <summary>
     /// The target user is not connected to voice.
     /// </summary>
     UserNotInVoice = 40032,
@@ -465,6 +500,11 @@ public enum DiscordError
     /// An application command with that name already exists.
     /// </summary>
     ApplicationCommandWithNameExists = 40041,
+
+    /// <summary>
+    /// An application interaction failed to send for some reason.
+    /// </summary>
+    ApplicationInteractionFailedToSend = 40034,
 
     /// <summary>
     /// The interaction has already been acknowledged by the application.
@@ -551,6 +591,11 @@ public enum DiscordError
     /// delete.
     /// </summary>
     TooFewOrTooManyMessagesToDelete = 50016,
+
+    /// <summary>
+    /// The provided MFA level was invalid.
+    /// </summary>
+    InvalidMFALevel = 50017,
 
     /// <summary>
     /// A message and only be pinned  to the channel it was went in.
@@ -654,6 +699,11 @@ public enum DiscordError
     CannotDeleteCommunityRequiredChannel = 50074,
 
     /// <summary>
+    /// Stickers sent in a message can't be edited.
+    /// </summary>
+    CannotEditStickersInMessage = 50080,
+
+    /// <summary>
     /// Invalid sticker sent.
     /// </summary>
     InvalidSticker = 50081,
@@ -699,6 +749,26 @@ public enum DiscordError
     InvalidJSONInRequestBody = 50109,
 
     /// <summary>
+    /// The ownership of the object cannot be transferred to a bot user.
+    /// </summary>
+    OwnershipCannotBeTransferredToBotUser = 50132,
+
+    /// <summary>
+    /// Failed to resize the uploaded asset below the maximum size (262144 bytes).
+    /// </summary>
+    FailedToResizeAsset = 50138,
+
+    /// <summary>
+    /// The uploaded file was not found.
+    /// </summary>
+    UploadedFileNotFound = 50146,
+
+    /// <summary>
+    /// You do not have permission to send this sticker.
+    /// </summary>
+    MissingPermissionToSendSticker = 50600,
+
+    /// <summary>
     /// Two factor is required for this operation.
     /// </summary>
     TwoFactorRequired = 60003,
@@ -712,6 +782,11 @@ public enum DiscordError
     /// Reaction was blocked.
     /// </summary>
     ReactionBlocked = 90001,
+
+    /// <summary>
+    /// The application isn't available yet. Try again later.
+    /// </summary>
+    ApplicationNotYetAvailable = 110001,
 
     /// <summary>
     /// API resource temporarily overloaded. Try again a little later.
@@ -791,5 +866,20 @@ public enum DiscordError
     /// <summary>
     /// For whatever reason, the system failed to create a stage for the stage event.
     /// </summary>
-    FailedToCreatedStageForEvent = 180002
+    FailedToCreatedStageForEvent = 180002,
+
+    /// <summary>
+    /// The posted message was blocked by an automatic moderation rule.
+    /// </summary>
+    MessageBlockedByAutomaticModeration = 200000,
+
+    /// <summary>
+    /// The title of the thread was blocked by an automatic moderation rule.
+    /// </summary>
+    TitleBlockedByAutomaticModeration = 200001,
+
+    /// <summary>
+    /// Webhooks can only create threads in forum channels, not in other channels.
+    /// </summary>
+    WebhooksCanOnlyCreateThreadsInForumChannels = 220003
 }

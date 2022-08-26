@@ -4,7 +4,7 @@
 //  Author:
 //       Jarl Gullberg <jarl.gullberg@gmail.com>
 //
-//  Copyright (c) 2017 Jarl Gullberg
+//  Copyright (c) Jarl Gullberg
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -33,15 +33,21 @@ public interface IAuditLogChange
 {
     /// <summary>
     /// Gets the new value of the key.
-    /// <remarks>The type of this value (if present) is only known at runtime by inspecting the <see cref="Key"/>
-    /// property and matching it with the appropriate audit log change key.</remarks>
     /// </summary>
-    Optional<object?> NewValue { get; }
+    /// <remarks>
+    /// This is the raw unparsed value from Discord's payload. Use the additional information available in the audit log
+    /// entry to determine an appropriate type to parse it into.
+    /// </remarks>
+    Optional<string> NewValue { get; }
 
     /// <summary>
     /// Gets the old value of the key.
     /// </summary>
-    Optional<object?> OldValue { get; }
+    /// <remarks>
+    /// This is the raw unparsed value from Discord's payload. Use the additional information available in the audit log
+    /// entry to determine an appropriate type to parse it into.
+    /// </remarks>
+    Optional<string> OldValue { get; }
 
     /// <summary>
     /// Gets the name of the audit log change key.

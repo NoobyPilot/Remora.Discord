@@ -4,7 +4,7 @@
 //  Author:
 //       Jarl Gullberg <jarl.gullberg@gmail.com>
 //
-//  Copyright (c) 2017 Jarl Gullberg
+//  Copyright (c) Jarl Gullberg
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -55,15 +55,11 @@ public class EchoResponder : IResponder<IMessageCreate>
             return Result.FromSuccess();
         }
 
-        var replyResult = await _channelAPI.CreateMessageAsync
+        return (Result)await _channelAPI.CreateMessageAsync
         (
             gatewayEvent.ChannelID,
             gatewayEvent.Content,
             ct: ct
         );
-
-        return replyResult.IsSuccess
-            ? Result.FromSuccess()
-            : Result.FromError(replyResult);
     }
 }

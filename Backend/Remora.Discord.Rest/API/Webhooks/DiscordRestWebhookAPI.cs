@@ -4,7 +4,7 @@
 //  Author:
 //       Jarl Gullberg <jarl.gullberg@gmail.com>
 //
-//  Copyright (c) 2017 Jarl Gullberg
+//  Copyright (c) Jarl Gullberg
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -160,7 +160,9 @@ public class DiscordRestWebhookAPI : AbstractDiscordRestAPI, IDiscordRestWebhook
         return this.RestHttpClient.GetAsync<IWebhook>
         (
             $"webhooks/{webhookID}/{token}",
-            b => b.WithRateLimitContext(this.RateLimitCache),
+            b => b
+                .WithRateLimitContext(this.RateLimitCache)
+                .SkipAuthorization(),
             ct: ct
         );
     }
@@ -233,7 +235,8 @@ public class DiscordRestWebhookAPI : AbstractDiscordRestAPI, IDiscordRestWebhook
                     }
                 )
                 .AddAuditLogReason(reason)
-                .WithRateLimitContext(this.RateLimitCache),
+                .WithRateLimitContext(this.RateLimitCache)
+                .SkipAuthorization(),
             ct: ct
         );
     }
@@ -266,7 +269,10 @@ public class DiscordRestWebhookAPI : AbstractDiscordRestAPI, IDiscordRestWebhook
         return this.RestHttpClient.DeleteAsync
         (
             $"webhooks/{webhookID}/{token}",
-            b => b.AddAuditLogReason(reason).WithRateLimitContext(this.RateLimitCache),
+            b => b
+                .AddAuditLogReason(reason)
+                .WithRateLimitContext(this.RateLimitCache)
+                .SkipAuthorization(),
             ct
         );
     }
@@ -287,6 +293,7 @@ public class DiscordRestWebhookAPI : AbstractDiscordRestAPI, IDiscordRestWebhook
         Optional<IReadOnlyList<IMessageComponent>> components = default,
         Optional<IReadOnlyList<OneOf<FileData, IPartialAttachment>>> attachments = default,
         Optional<MessageFlags> flags = default,
+        Optional<string> threadName = default,
         CancellationToken ct = default
     )
     {
@@ -341,6 +348,7 @@ public class DiscordRestWebhookAPI : AbstractDiscordRestAPI, IDiscordRestWebhook
                             json.Write("components", components, this.JsonOptions);
                             json.Write("attachments", attachmentList, this.JsonOptions);
                             json.Write("flags", flags, this.JsonOptions);
+                            json.Write("thread_name", threadName, this.JsonOptions);
                         }
                     )
                     .WithRateLimitContext(this.RateLimitCache);
@@ -385,8 +393,8 @@ public class DiscordRestWebhookAPI : AbstractDiscordRestAPI, IDiscordRestWebhook
         Optional<string?> content = default,
         Optional<IReadOnlyList<IEmbed>?> embeds = default,
         Optional<IAllowedMentions?> allowedMentions = default,
-        Optional<IReadOnlyList<IMessageComponent>> components = default,
-        Optional<IReadOnlyList<OneOf<FileData, IPartialAttachment>>> attachments = default,
+        Optional<IReadOnlyList<IMessageComponent>?> components = default,
+        Optional<IReadOnlyList<OneOf<FileData, IPartialAttachment>>?> attachments = default,
         Optional<Snowflake> threadID = default,
         CancellationToken ct = default
     )
@@ -406,8 +414,12 @@ public class DiscordRestWebhookAPI : AbstractDiscordRestAPI, IDiscordRestWebhook
             $"webhooks/{webhookID}/{token}/messages/{messageID}",
             b =>
             {
-                Optional<IReadOnlyList<IPartialAttachment>> attachmentList = default;
-                if (attachments.HasValue)
+                Optional<IReadOnlyList<IPartialAttachment>?> attachmentList = default;
+                if (attachments.HasValue && attachments.Value is null)
+                {
+                    attachmentList = null;
+                }
+                else if (attachments.HasValue && attachments.Value is not null)
                 {
                     // build attachment list
                     attachmentList = attachments.Value.Select
@@ -439,17 +451,17 @@ public class DiscordRestWebhookAPI : AbstractDiscordRestAPI, IDiscordRestWebhook
                 }
 
                 b.WithJson
-                    (
-                        json =>
-                        {
-                            json.Write("content", content, this.JsonOptions);
-                            json.Write("embeds", embeds, this.JsonOptions);
-                            json.Write("allowed_mentions", allowedMentions, this.JsonOptions);
-                            json.Write("components", components, this.JsonOptions);
-                            json.Write("attachments", attachmentList, this.JsonOptions);
-                        }
-                    )
-                    .WithRateLimitContext(this.RateLimitCache);
+                (
+                    json =>
+                    {
+                        json.Write("content", content, this.JsonOptions);
+                        json.Write("embeds", embeds, this.JsonOptions);
+                        json.Write("allowed_mentions", allowedMentions, this.JsonOptions);
+                        json.Write("components", components, this.JsonOptions);
+                        json.Write("attachments", attachmentList, this.JsonOptions);
+                    }
+                )
+                .WithRateLimitContext(this.RateLimitCache);
             },
             ct: ct
         );

@@ -4,7 +4,7 @@
 //  Author:
 //       Jarl Gullberg <jarl.gullberg@gmail.com>
 //
-//  Copyright (c) 2017 Jarl Gullberg
+//  Copyright (c) Jarl Gullberg
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -25,7 +25,6 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 using Remora.Discord.API.Abstractions.Gateway.Events;
 using Remora.Discord.API.Abstractions.Objects;
-using Remora.Discord.API.Objects;
 using Remora.Rest.Core;
 
 namespace Remora.Discord.API.Gateway.Events;
@@ -57,15 +56,6 @@ public record GuildCreate
     Snowflake? SystemChannelID,
     SystemChannelFlags SystemChannelFlags,
     Snowflake? RulesChannelID,
-    Optional<DateTimeOffset> JoinedAt,
-    Optional<bool> IsLarge,
-    Optional<bool> IsUnavailable,
-    Optional<int> MemberCount,
-    Optional<IReadOnlyList<IPartialVoiceState>> VoiceStates,
-    Optional<IReadOnlyList<IGuildMember>> Members,
-    Optional<IReadOnlyList<IChannel>> Channels,
-    Optional<IReadOnlyList<IChannel>> Threads,
-    Optional<IReadOnlyList<IPartialPresence>> Presences,
     Optional<int?> MaxPresences,
     Optional<int> MaxMembers,
     string? VanityUrlCode,
@@ -80,60 +70,17 @@ public record GuildCreate
     Optional<int> ApproximatePresenceCount,
     Optional<IWelcomeScreen> WelcomeScreen,
     GuildNSFWLevel NSFWLevel,
-    Optional<IReadOnlyList<IStageInstance>> StageInstances,
     Optional<IReadOnlyList<ISticker>> Stickers,
-    Optional<IReadOnlyList<IGuildScheduledEvent>> GuildScheduledEvents,
-    bool IsPremiumProgressBarEnabled
-) : Guild
-(
-    ID,
-    Name,
-    Icon,
-    Splash,
-    DiscoverySplash,
-    IsOwner,
-    OwnerID,
-    Permissions,
-    AFKChannelID,
-    AFKTimeout,
-    VerificationLevel,
-    DefaultMessageNotifications,
-    ExplicitContentFilter,
-    Roles,
-    Emojis,
-    GuildFeatures,
-    MFALevel,
-    ApplicationID,
-    IsWidgetEnabled,
-    WidgetChannelID,
-    SystemChannelID,
-    SystemChannelFlags,
-    RulesChannelID,
-    JoinedAt,
-    IsLarge,
-    IsUnavailable,
-    MemberCount,
-    VoiceStates,
-    Members,
-    Channels,
-    Threads,
-    Presences,
-    MaxPresences,
-    MaxMembers,
-    VanityUrlCode,
-    Description,
-    Banner,
-    PremiumTier,
-    PremiumSubscriptionCount,
-    PreferredLocale,
-    PublicUpdatesChannelID,
-    MaxVideoChannelUsers,
-    ApproximateMemberCount,
-    ApproximatePresenceCount,
-    WelcomeScreen,
-    NSFWLevel,
-    StageInstances,
-    Stickers,
-    GuildScheduledEvents,
-    IsPremiumProgressBarEnabled
-), IGuildCreate;
+    bool IsPremiumProgressBarEnabled,
+    DateTimeOffset JoinedAt,
+    bool IsLarge,
+    Optional<bool> IsUnavailable,
+    int MemberCount,
+    IReadOnlyList<IPartialVoiceState> VoiceStates,
+    IReadOnlyList<IGuildMember> Members,
+    IReadOnlyList<IChannel> Channels,
+    IReadOnlyList<IChannel> Threads,
+    IReadOnlyList<IPartialPresence> Presences,
+    IReadOnlyList<IStageInstance> StageInstances,
+    IReadOnlyList<IGuildScheduledEvent> GuildScheduledEvents
+) : IGuildCreate;

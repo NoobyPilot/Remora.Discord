@@ -4,7 +4,7 @@
 //  Author:
 //       Jarl Gullberg <jarl.gullberg@gmail.com>
 //
-//  Copyright (c) 2017 Jarl Gullberg
+//  Copyright (c) Jarl Gullberg
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -31,12 +31,12 @@ using Xunit;
 namespace Remora.Discord.Commands.Tests.Extensions;
 
 /// <summary>
-/// Tests the <see cref="InteractionDataExtensions"/> class.
+/// Tests the <see cref="ApplicationCommandDataExtensions"/> class.
 /// </summary>
 public class InteractionDataExtensionsTests
 {
     /// <summary>
-    /// Tests the <see cref="InteractionDataExtensions.UnpackInteraction"/> method.
+    /// Tests the <see cref="ApplicationCommandDataExtensions.UnpackInteraction"/> method.
     /// </summary>
     public class UnpackInteraction
     {
@@ -46,11 +46,11 @@ public class InteractionDataExtensionsTests
         [Fact]
         public void CanUnpackRootLevelParameterlessCommand()
         {
-            var command = new InteractionData
+            var command = new ApplicationCommandData
             (
                 DiscordSnowflake.New(0),
                 "a",
-                default
+                ApplicationCommandType.ChatInput
             );
 
             command.UnpackInteraction(out var commandPath, out var parameters);
@@ -64,12 +64,12 @@ public class InteractionDataExtensionsTests
         [Fact]
         public void CanUnpackRootLevelSingleParameterCommand()
         {
-            var command = new InteractionData
+            var command = new ApplicationCommandData
             (
                 DiscordSnowflake.New(0),
                 "a",
-                default,
-                new[]
+                ApplicationCommandType.ChatInput,
+                Options: new[]
                 {
                     new ApplicationCommandInteractionDataOption
                     (
@@ -96,12 +96,12 @@ public class InteractionDataExtensionsTests
         [Fact]
         public void CanUnpackRootLevelMultipleParameterCommand()
         {
-            var command = new InteractionData
+            var command = new ApplicationCommandData
             (
                 DiscordSnowflake.New(0),
                 "a",
-                default,
-                new[]
+                ApplicationCommandType.ChatInput,
+                Options: new[]
                 {
                     new ApplicationCommandInteractionDataOption
                     (
@@ -138,12 +138,12 @@ public class InteractionDataExtensionsTests
         [Fact]
         public void CanUnpackNestedParameterlessCommand()
         {
-            var command = new InteractionData
+            var command = new ApplicationCommandData
             (
                 DiscordSnowflake.New(0),
                 "a",
-                default,
-                new[]
+                ApplicationCommandType.ChatInput,
+                Options: new[]
                 {
                     new ApplicationCommandInteractionDataOption
                     (
@@ -164,12 +164,12 @@ public class InteractionDataExtensionsTests
         [Fact]
         public void CanUnpackNestedSingleParameterCommand()
         {
-            var command = new InteractionData
+            var command = new ApplicationCommandData
             (
                 DiscordSnowflake.New(0),
                 "a",
-                default,
-                new[]
+                ApplicationCommandType.ChatInput,
+                Options: new[]
                 {
                     new ApplicationCommandInteractionDataOption
                     (
@@ -205,12 +205,12 @@ public class InteractionDataExtensionsTests
         [Fact]
         public void CanUnpackNestedMultipleParameterCommand()
         {
-            var command = new InteractionData
+            var command = new ApplicationCommandData
             (
                 DiscordSnowflake.New(0),
                 "a",
-                default,
-                new[]
+                ApplicationCommandType.ChatInput,
+                Options: new[]
                 {
                     new ApplicationCommandInteractionDataOption
                     (
@@ -248,6 +248,50 @@ public class InteractionDataExtensionsTests
 
             Assert.Single(parameters["d"]);
             Assert.Equal("2", parameters["d"][0]);
+        }
+
+        /// <summary>
+        /// Tests whether the method performs as expected in a single case.
+        /// </summary>
+        [Fact]
+        public void CanUnpackUserCommand()
+        {
+            var command = new ApplicationCommandData
+            (
+                DiscordSnowflake.New(0),
+                "user",
+                ApplicationCommandType.User,
+                TargetID: DiscordSnowflake.New(1)
+            );
+
+            command.UnpackInteraction(out var commandPath, out var parameters);
+
+            Assert.Equal(new[] { "user" }, commandPath);
+            Assert.Equal(1, parameters.Count);
+            Assert.True(parameters.ContainsKey("user"));
+            Assert.Equal("1", parameters["user"][0]);
+        }
+
+        /// <summary>
+        /// Tests whether the method performs as expected in a single case.
+        /// </summary>
+        [Fact]
+        public void CanUnpackMessageCommand()
+        {
+            var command = new ApplicationCommandData
+            (
+                DiscordSnowflake.New(0),
+                "message",
+                ApplicationCommandType.Message,
+                TargetID: DiscordSnowflake.New(1)
+            );
+
+            command.UnpackInteraction(out var commandPath, out var parameters);
+
+            Assert.Equal(new[] { "message" }, commandPath);
+            Assert.Equal(1, parameters.Count);
+            Assert.True(parameters.ContainsKey("message"));
+            Assert.Equal("1", parameters["message"][0]);
         }
     }
 }

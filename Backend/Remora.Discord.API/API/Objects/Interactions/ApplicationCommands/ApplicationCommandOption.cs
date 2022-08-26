@@ -4,7 +4,7 @@
 //  Author:
 //       Jarl Gullberg <jarl.gullberg@gmail.com>
 //
-//  Copyright (c) 2017 Jarl Gullberg
+//  Copyright (c) Jarl Gullberg
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -44,5 +44,11 @@ public record ApplicationCommandOption
     Optional<IReadOnlyList<ChannelType>> ChannelTypes = default,
     Optional<OneOf<ulong, long, float, double>> MinValue = default,
     Optional<OneOf<ulong, long, float, double>> MaxValue = default,
-    Optional<bool> EnableAutocomplete = default
+    Optional<bool> EnableAutocomplete = default,
+    Optional<IReadOnlyDictionary<string, string>?> NameLocalizations = default,
+    Optional<string> NameLocalized = default,
+    Optional<IReadOnlyDictionary<string, string>?> DescriptionLocalizations = default,
+    Optional<string> DescriptionLocalized = default,
+    Optional<uint> MinLength = default,
+    Optional<uint> MaxLength = default
 ) : IApplicationCommandOption;

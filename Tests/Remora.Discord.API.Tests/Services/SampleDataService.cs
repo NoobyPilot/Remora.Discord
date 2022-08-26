@@ -4,7 +4,7 @@
 //  Author:
 //       Jarl Gullberg <jarl.gullberg@gmail.com>
 //
-//  Copyright (c) 2017 Jarl Gullberg
+//  Copyright (c) Jarl Gullberg
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -102,7 +102,7 @@ public class SampleDataService
         return Path.Combine(basePath, "Samples");
     }
 
-    private Result<IReadOnlyList<SampleDataDescriptor>> GetSampleDataSet<TType>(string subfolder)
+    private static Result<IReadOnlyList<SampleDataDescriptor>> GetSampleDataSet<TType>(string subfolder)
     {
         var getBasePath = GetBaseSampleDataPath();
         if (!getBasePath.IsSuccess)

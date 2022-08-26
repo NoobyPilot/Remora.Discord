@@ -4,7 +4,7 @@
 //  Author:
 //       Jarl Gullberg <jarl.gullberg@gmail.com>
 //
-//  Copyright (c) 2017 Jarl Gullberg
+//  Copyright (c) Jarl Gullberg
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -60,7 +60,7 @@ public static class KeyHelpers
     /// <returns>The cache key.</returns>
     public static string CreateGuildInvitesCacheKey(in Snowflake guildID)
     {
-        return $"Guid:{guildID}:Invites";
+        return $"{CreateGuildCacheKey(guildID)}:Invites";
     }
 
     /// <summary>
@@ -487,5 +487,15 @@ public static class KeyHelpers
     public static string CreateGuildEmojisCacheKey(Snowflake guildID)
     {
         return $"{CreateGuildCacheKey(guildID)}:Emojis";
+    }
+
+    /// <summary>
+    /// Creates a cache key for an evicted entity, identified by the given key.
+    /// </summary>
+    /// <param name="key">The original key.</param>
+    /// <returns>The eviction key.</returns>
+    public static string CreateEvictionCacheKey(string key)
+    {
+        return $"Evicted:{key}";
     }
 }

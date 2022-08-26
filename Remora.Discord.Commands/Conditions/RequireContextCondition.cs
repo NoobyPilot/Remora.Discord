@@ -4,7 +4,7 @@
 //  Author:
 //       Jarl Gullberg <jarl.gullberg@gmail.com>
 //
-//  Copyright (c) 2017 Jarl Gullberg
+//  Copyright (c) Jarl Gullberg
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -61,7 +61,7 @@ public class RequireContextCondition : ICondition<RequireContextAttribute>
         var getChannel = await _channelAPI.GetChannelAsync(_context.ChannelID, ct);
         if (!getChannel.IsSuccess)
         {
-            return Result.FromError(getChannel);
+            return (Result)getChannel;
         }
 
         var channel = getChannel.Entity;

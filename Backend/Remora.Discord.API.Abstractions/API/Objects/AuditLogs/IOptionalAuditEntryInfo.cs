@@ -4,7 +4,7 @@
 //  Author:
 //       Jarl Gullberg <jarl.gullberg@gmail.com>
 //
-//  Copyright (c) 2017 Jarl Gullberg
+//  Copyright (c) Jarl Gullberg
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -31,6 +31,14 @@ namespace Remora.Discord.API.Abstractions.Objects;
 [PublicAPI]
 public interface IOptionalAuditEntryInfo
 {
+    /// <summary>
+    /// Gets the application for which entities were targeted.
+    /// </summary>
+    /// <remarks>
+    /// Relevant for <see cref="AuditLogEvent.ApplicationCommandPermissionUpdate"/>.
+    /// </remarks>
+    Optional<Snowflake> ApplicationID { get; }
+
     /// <summary>
     /// Gets the channel in which the entities were targeted.
     /// <remarks>

@@ -4,7 +4,7 @@
 //  Author:
 //       Jarl Gullberg <jarl.gullberg@gmail.com>
 //
-//  Copyright (c) 2017 Jarl Gullberg
+//  Copyright (c) Jarl Gullberg
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -89,7 +89,7 @@ public class RequireBotDiscordPermissionsCondition :
 
         if (!getChannel.IsSuccess)
         {
-            return Result.FromError(getChannel);
+            return (Result)getChannel;
         }
 
         var channel = getChannel.Entity;
@@ -116,7 +116,7 @@ public class RequireBotDiscordPermissionsCondition :
         var getUser = await _userAPI.GetCurrentUserAsync(ct);
         if (!getUser.IsSuccess)
         {
-            return Result.FromError(getUser);
+            return (Result)getUser;
         }
 
         var user = getUser.Entity;
@@ -124,7 +124,7 @@ public class RequireBotDiscordPermissionsCondition :
         var getGuild = await _guildAPI.GetGuildAsync(guildID, ct: ct);
         if (!getGuild.IsSuccess)
         {
-            return Result.FromError(getGuild);
+            return (Result)getGuild;
         }
 
         var guild = getGuild.Entity;
@@ -137,7 +137,7 @@ public class RequireBotDiscordPermissionsCondition :
         var getRoles = await _guildAPI.GetGuildRolesAsync(guildID, ct);
         if (!getRoles.IsSuccess)
         {
-            return Result.FromError(getRoles);
+            return (Result)getRoles;
         }
 
         var guildRoles = getRoles.Entity;
@@ -145,7 +145,7 @@ public class RequireBotDiscordPermissionsCondition :
         var getMember = await _guildAPI.GetGuildMemberAsync(guildID, user.ID, ct);
         if (!getMember.IsSuccess)
         {
-            return Result.FromError(getMember);
+            return (Result)getMember;
         }
 
         var everyoneRole = guildRoles.First(x => x.ID == guildID);

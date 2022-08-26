@@ -4,7 +4,7 @@
 //  Author:
 //       Jarl Gullberg <jarl.gullberg@gmail.com>
 //
-//  Copyright (c) 2017 Jarl Gullberg
+//  Copyright (c) Jarl Gullberg
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -62,10 +62,7 @@ public class AutocompleteCommands : CommandGroup
             Colour: Color.FromArgb((int)(0xFF000000 | (int)colour))
         );
 
-        var result = await _feedbackService.SendContextualEmbedAsync(embed, ct: this.CancellationToken);
-        return result.IsSuccess
-            ? Result.FromSuccess()
-            : Result.FromError(result);
+        return (Result)await _feedbackService.SendContextualEmbedAsync(embed, ct: this.CancellationToken);
     }
 
     /// <summary>
@@ -76,14 +73,10 @@ public class AutocompleteCommands : CommandGroup
     [Command("display-word")]
     public async Task<Result> DisplayWord([AutocompleteProvider("autocomplete::dictionary")] string word)
     {
-        var result = await _feedbackService.SendContextualNeutralAsync
+        return (Result)await _feedbackService.SendContextualNeutralAsync
         (
             $"Your word is \"{word}\".",
             ct: this.CancellationToken
         );
-
-        return result.IsSuccess
-            ? Result.FromSuccess()
-            : Result.FromError(result);
     }
 }

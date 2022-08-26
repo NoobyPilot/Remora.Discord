@@ -4,7 +4,7 @@
 //  Author:
 //       Jarl Gullberg <jarl.gullberg@gmail.com>
 //
-//  Copyright (c) 2017 Jarl Gullberg
+//  Copyright (c) Jarl Gullberg
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -33,8 +33,12 @@ namespace Remora.Discord.API.Abstractions.Objects;
 public interface IGuildApplicationCommandPermissions : IPartialGuildApplicationCommandPermissions
 {
     /// <summary>
-    /// Gets the ID of the command.
+    /// Gets the ID of the command or the application the permission applies to.
     /// </summary>
+    /// <remarks>
+    /// If this ID is that of an application, its permissions apply to all commands that do not have an explicit
+    /// permission set.
+    /// </remarks>
     new Snowflake ID { get; }
 
     /// <summary>

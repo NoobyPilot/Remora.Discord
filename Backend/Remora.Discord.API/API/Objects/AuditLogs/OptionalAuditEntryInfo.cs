@@ -4,7 +4,7 @@
 //  Author:
 //       Jarl Gullberg <jarl.gullberg@gmail.com>
 //
-//  Copyright (c) 2017 Jarl Gullberg
+//  Copyright (c) Jarl Gullberg
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -32,6 +32,7 @@ namespace Remora.Discord.API.Objects;
 [PublicAPI]
 public record OptionalAuditEntryInfo
 (
+    Optional<Snowflake> ApplicationID = default,
     Optional<Snowflake> ChannelID = default,
     Optional<string> Count = default,
     Optional<string> DeleteMemberDays = default,

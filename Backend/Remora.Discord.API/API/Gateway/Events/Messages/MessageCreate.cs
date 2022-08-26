@@ -4,7 +4,7 @@
 //  Author:
 //       Jarl Gullberg <jarl.gullberg@gmail.com>
 //
-//  Copyright (c) 2017 Jarl Gullberg
+//  Copyright (c) Jarl Gullberg
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -25,7 +25,6 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 using Remora.Discord.API.Abstractions.Gateway.Events;
 using Remora.Discord.API.Abstractions.Objects;
-using Remora.Discord.API.Objects;
 using Remora.Rest.Core;
 
 namespace Remora.Discord.API.Gateway.Events;
@@ -34,17 +33,17 @@ namespace Remora.Discord.API.Gateway.Events;
 [PublicAPI]
 public record MessageCreate
 (
+    Optional<Snowflake> GuildID,
+    Optional<IPartialGuildMember> Member,
+    IReadOnlyList<IUserMention> Mentions,
     Snowflake ID,
     Snowflake ChannelID,
-    Optional<Snowflake> GuildID,
     IUser Author,
-    Optional<IPartialGuildMember> Member,
     string Content,
     DateTimeOffset Timestamp,
     DateTimeOffset? EditedTimestamp,
     bool IsTTS,
     bool MentionsEveryone,
-    IReadOnlyList<IUserMention> Mentions,
     IReadOnlyList<Snowflake> MentionedRoles,
     Optional<IReadOnlyList<IChannelMention>> MentionedChannels,
     IReadOnlyList<IAttachment> Attachments,
@@ -63,37 +62,6 @@ public record MessageCreate
     Optional<IMessageInteraction> Interaction = default,
     Optional<IChannel> Thread = default,
     Optional<IReadOnlyList<IMessageComponent>> Components = default,
-    Optional<IReadOnlyList<IStickerItem>> StickerItems = default
-) : Message
-(
-    ID,
-    ChannelID,
-    GuildID,
-    Author,
-    Member,
-    Content,
-    Timestamp,
-    EditedTimestamp,
-    IsTTS,
-    MentionsEveryone,
-    Mentions,
-    MentionedRoles,
-    MentionedChannels,
-    Attachments,
-    Embeds,
-    Reactions,
-    Nonce,
-    IsPinned,
-    WebhookID,
-    Type,
-    Activity,
-    Application,
-    ApplicationID,
-    MessageReference,
-    Flags,
-    ReferencedMessage,
-    Interaction,
-    Thread,
-    Components,
-    StickerItems
-), IMessageCreate;
+    Optional<IReadOnlyList<IStickerItem>> StickerItems = default,
+    Optional<int> Position = default
+) : IMessageCreate;

@@ -1,35 +1,23 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Remora.Sdk/1.0.0">
 
     <PropertyGroup>
-        <TargetFrameworks>netstandard2.1;net5.0;net6.0</TargetFrameworks>
-    </PropertyGroup>
-
-    <PropertyGroup>
-        <Version>2022.19</Version>
+        <VersionPrefix>2022.47</VersionPrefix>
         <Description>Metapackage for Remora.Discord's various components</Description>
         <PackageReleaseNotes>
-            Add check for the guild owner.
-            Mark the API version enumeration as public.
-            Mark some more types as PublicAPI.
-            Implement default_auto_archive_duration for channel creation.
-            Remove the "none" flag.
-            Implement GuildID in InteractionData.
-            Merge pull request #166 from VelvetThePanda/feature/redis-cache
-            Use default arguments for double.TryParse
-            Parse X-RateLimit-Reset independent of system culture
-            Use # to separate username and discriminator
-            Add PropertyConverter for IApplicationCommandInteractionDataResolved.Attachments
+            Update documentation.
+            Update channel type names.
+            Implement support for audit log reason when modifying the MFA level.
+            Use Remora.Sdk and friends.
+            Add support for resuming the gateway via the resume URL.
         </PackageReleaseNotes>
 
         <!-- No need for build output, since this is a metapackage -->
-        <IncludeSymbols>false</IncludeSymbols>
-        <IncludeSource>false</IncludeSource>
-        <EmbedUntrackedSources>false</EmbedUntrackedSources>
-        <EmbedAllSources>false</EmbedAllSources>
         <IncludeBuildOutput>false</IncludeBuildOutput>
+        <NoPackageAnalysis>true</NoPackageAnalysis>
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Backend\Remora.Discord.Caching\Remora.Discord.Caching.csproj" />
       <ProjectReference Include="..\Remora.Discord.Commands\Remora.Discord.Commands.csproj" />
       <ProjectReference Include="..\Remora.Discord.Extensions\Remora.Discord.Extensions.csproj" />
       <ProjectReference Include="..\Remora.Discord.Hosting\Remora.Discord.Hosting.csproj" />

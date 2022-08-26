@@ -4,7 +4,7 @@
 //  Author:
 //       Jarl Gullberg <jarl.gullberg@gmail.com>
 //
-//  Copyright (c) 2017 Jarl Gullberg
+//  Copyright (c) Jarl Gullberg
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -37,8 +37,35 @@ public enum DiscordVoicePermission
     /// <inheritdoc cref="DiscordPermission.ManageChannels"/>
     ManageChannels = DiscordPermission.ManageChannels,
 
+    /// <inheritdoc cref="DiscordPermission.AddReactions"/>
+    AddReactions = DiscordPermission.AddReactions,
+
     /// <inheritdoc cref="DiscordPermission.ViewChannel"/>
     ViewChannel = DiscordPermission.ViewChannel,
+
+    /// <inheritdoc cref="DiscordPermission.SendMessages"/>
+    SendMessages = DiscordPermission.SendMessages,
+
+    /// <inheritdoc cref="DiscordPermission.SendTTSMessages"/>
+    SendTTSMessages = DiscordPermission.SendTTSMessages,
+
+    /// <inheritdoc cref="DiscordPermission.ManageMessages"/>
+    ManageMessages = DiscordPermission.ManageMessages,
+
+    /// <inheritdoc cref="DiscordPermission.EmbedLinks"/>
+    EmbedLinks = DiscordPermission.EmbedLinks,
+
+    /// <inheritdoc cref="DiscordPermission.AttachFiles"/>
+    AttachFiles = DiscordPermission.AttachFiles,
+
+    /// <inheritdoc cref="DiscordPermission.ReadMessageHistory"/>
+    ReadMessageHistory = DiscordPermission.ReadMessageHistory,
+
+    /// <inheritdoc cref="DiscordPermission.MentionEveryone"/>
+    MentionEveryone = DiscordPermission.MentionEveryone,
+
+    /// <inheritdoc cref="DiscordPermission.UseExternalEmojis"/>
+    UseExternalEmojis = DiscordPermission.UseExternalEmojis,
 
     /// <inheritdoc cref="DiscordPermission.Connect"/>
     Connect = DiscordPermission.Connect,
@@ -61,11 +88,20 @@ public enum DiscordVoicePermission
     /// <inheritdoc cref="DiscordPermission.ManageRoles"/>
     ManageRoles = DiscordPermission.ManageRoles,
 
+    /// <inheritdoc cref="DiscordPermission.ManageWebhooks"/>
+    ManageWebhooks = DiscordPermission.ManageWebhooks,
+
+    /// <inheritdoc cref="DiscordPermission.UseApplicationCommands"/>
+    UseApplicationCommands = DiscordPermission.UseApplicationCommands,
+
     /// <inheritdoc cref="DiscordPermission.RequestToSpeak"/>
     RequestToSpeak = DiscordPermission.RequestToSpeak,
 
     /// <inheritdoc cref="DiscordPermission.ManageEvents"/>
     ManageEvents = DiscordPermission.ManageEvents,
+
+    /// <inheritdoc cref="DiscordPermission.UseExternalStickers"/>
+    UseExternalStickers = DiscordPermission.UseExternalStickers,
 
     /// <inheritdoc cref="DiscordPermission.UseEmbeddedActivities"/>
     UseEmbeddedActivities = DiscordPermission.UseEmbeddedActivities

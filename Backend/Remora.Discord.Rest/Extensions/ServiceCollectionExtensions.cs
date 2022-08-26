@@ -4,7 +4,7 @@
 //  Author:
 //       Jarl Gullberg <jarl.gullberg@gmail.com>
 //
-//  Copyright (c) 2017 Jarl Gullberg
+//  Copyright (c) Jarl Gullberg
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -21,6 +21,7 @@
 //
 
 using System;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -39,6 +40,7 @@ using Remora.Discord.API.Objects;
 using Remora.Discord.Caching.Abstractions.Services;
 using Remora.Discord.Rest.API;
 using Remora.Discord.Rest.Caching;
+using Remora.Discord.Rest.Handlers;
 using Remora.Discord.Rest.Polly;
 using Remora.Rest;
 using Remora.Rest.Extensions;
@@ -55,13 +57,13 @@ public static class ServiceCollectionExtensions
     /// Adds the services required for Discord's REST API.
     /// </summary>
     /// <param name="serviceCollection">The service collection.</param>
-    /// <param name="tokenFactory">A function that creates or retrieves the authorization token.</param>
+    /// <param name="tokenFactory">A function that creates or retrieves the authorization token and its token type.</param>
     /// <param name="buildClient">Extra client building operations.</param>
     /// <returns>The service collection, with the services added.</returns>
     public static IServiceCollection AddDiscordRest
     (
         this IServiceCollection serviceCollection,
-        Func<IServiceProvider, string> tokenFactory,
+        Func<IServiceProvider, (string Token, DiscordTokenType TokenType)> tokenFactory,
         Action<IHttpClientBuilder>? buildClient = null
     )
     {
@@ -73,7 +75,12 @@ public static class ServiceCollectionExtensions
         serviceCollection.ConfigureDiscordJsonConverters();
 
         serviceCollection
-            .AddSingleton<ITokenStore>(serviceProvider => new TokenStore(tokenFactory(serviceProvider)));
+            .AddSingleton<ITokenStore>(serviceProvider =>
+            {
+                var (token, tokenType) = tokenFactory(serviceProvider);
+                return new TokenStore(token, tokenType);
+            })
+            .AddTransient<TokenAuthorizationHandler>();
 
         serviceCollection.TryAddTransient<IDiscordRestAuditLogAPI>(s => new DiscordRestAuditLogAPI
         (
@@ -191,44 +198,29 @@ public static class ServiceCollectionExtensions
         var retryDelay = Backoff.DecorrelatedJitterBackoffV2(TimeSpan.FromSeconds(1), 5);
         var clientBuilder = serviceCollection
             .AddRestHttpClient<RestError>("Discord")
-            .ConfigureHttpClient((services, client) =>
+            .ConfigureHttpClient((_, client) =>
             {
                 var assemblyName = Assembly.GetExecutingAssembly().GetName();
                 var name = assemblyName.Name ?? "Remora.Discord";
                 var version = assemblyName.Version ?? new Version(1, 0, 0);
-
-                var tokenStore = services.GetRequiredService<ITokenStore>();
 
                 client.BaseAddress = Constants.BaseURL;
                 client.DefaultRequestHeaders.UserAgent.Add
                 (
                     new ProductInfoHeaderValue(name, version.ToString())
                 );
-
-                var token = tokenStore.Token;
-                if (string.IsNullOrWhiteSpace(token))
-                {
-                    throw new InvalidOperationException("The authentication token has to contain something.");
-                }
-
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue
-                (
-                    "Bot",
-                    token
-                );
             })
+            .AddHttpMessageHandler<TokenAuthorizationHandler>()
             .AddTransientHttpErrorPolicy
             (
                 b => b
                     .WaitAndRetryAsync(retryDelay)
-                    .WrapAsync(rateLimitPolicy)
             )
             .AddPolicyHandler
             (
                 Policy.HandleResult<HttpResponseMessage>(r => r.StatusCode == HttpStatusCode.TooManyRequests)
-                    .WaitAndRetryAsync
+                    .WaitAndRetryForeverAsync
                     (
-                        1,
                         (_, response, _) =>
                         {
                             if (response.Result == default)
@@ -242,11 +234,55 @@ public static class ServiceCollectionExtensions
                         },
                         (_, _, _, _) => Task.CompletedTask
                     )
+                    .WrapAsync(rateLimitPolicy)
             );
 
         // Run extra user-provided client building operations.
         buildClient?.Invoke(clientBuilder);
 
         return serviceCollection;
+    }
+
+    /// <summary>
+    /// Registers a decorator service, replacing the existing interface.
+    /// </summary>
+    /// <remarks>
+    /// Implementation based off of https://greatrexpectations.com/2018/10/25/decorators-in-net-core-with-dependency-injection/.
+    /// </remarks>
+    /// <param name="services">The service collection.</param>
+    /// <typeparam name="TInterface">The interface type to decorate.</typeparam>
+    /// <typeparam name="TDecorator">The decorator type.</typeparam>
+    /// <returns>The service collection, with the decorated service.</returns>
+    public static IServiceCollection Decorate<TInterface, TDecorator>(this IServiceCollection services)
+        where TInterface : class
+        where TDecorator : class, TInterface
+    {
+        var wrappedDescriptor = services.First(s => s.ServiceType == typeof(TInterface));
+
+        var objectFactory = ActivatorUtilities.CreateFactory(typeof(TDecorator), new[] { typeof(TInterface) });
+        services.Replace(ServiceDescriptor.Describe
+        (
+            typeof(TInterface),
+            s => (TInterface)objectFactory(s, new[] { s.CreateInstance(wrappedDescriptor) }),
+            wrappedDescriptor.Lifetime
+        ));
+
+        return services;
+    }
+
+    private static object CreateInstance(this IServiceProvider services, ServiceDescriptor descriptor)
+    {
+        if (descriptor.ImplementationInstance is not null)
+        {
+            return descriptor.ImplementationInstance;
+        }
+
+        return descriptor.ImplementationFactory is not null
+            ? descriptor.ImplementationFactory(services)
+            : ActivatorUtilities.GetServiceOrCreateInstance
+            (
+                services,
+                descriptor.ImplementationType ?? throw new InvalidOperationException()
+            );
     }
 }

@@ -4,7 +4,7 @@
 //  Author:
 //       Jarl Gullberg <jarl.gullberg@gmail.com>
 //
-//  Copyright (c) 2017 Jarl Gullberg
+//  Copyright (c) Jarl Gullberg
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -22,13 +22,18 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using NGettext;
 using Remora.Commands.Extensions;
 using Remora.Commands.Tokenization;
 using Remora.Commands.Trees;
+using Remora.Discord.API.Abstractions.Rest;
+using Remora.Discord.Commands.API;
 using Remora.Discord.Commands.Autocomplete;
 using Remora.Discord.Commands.Conditions;
 using Remora.Discord.Commands.Contexts;
@@ -38,6 +43,7 @@ using Remora.Discord.Commands.Parsers;
 using Remora.Discord.Commands.Responders;
 using Remora.Discord.Commands.Services;
 using Remora.Discord.Gateway.Extensions;
+using Remora.Discord.Rest.Extensions;
 using Remora.Extensions.Options.Immutable;
 
 namespace Remora.Discord.Commands.Extensions;
@@ -48,6 +54,61 @@ namespace Remora.Discord.Commands.Extensions;
 [PublicAPI]
 public static class ServiceCollectionExtensions
 {
+    /// <summary>
+    /// Adds NGetText localization information from the given assembly to the service provider.
+    /// </summary>
+    /// <param name="serviceCollection">The service collection.</param>
+    /// <param name="localizationDirectory">The resource directory where localizations are stored.</param>
+    /// <param name="localizationAssembly">The assembly to load localizations from.</param>
+    /// <returns>The service collection, with localizations added.</returns>
+    public static IServiceCollection AddNGetTextLocalizations
+    (
+        this IServiceCollection serviceCollection,
+        string localizationDirectory = ".remora.locales.",
+        Assembly? localizationAssembly = null
+    )
+    {
+        localizationAssembly ??= Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly();
+
+        // try to find a localization catalog
+        var names = localizationAssembly.GetManifestResourceNames()
+            .Where(n => n.Contains(localizationDirectory))
+            .Where(n => n.EndsWith(".mo"));
+
+        var localizationCatalogues = new Dictionary<CultureInfo, Catalog>();
+        foreach (var name in names)
+        {
+            // try to figure out the localization name
+            var index = name.IndexOf(localizationDirectory, StringComparison.Ordinal);
+            if (index == -1)
+            {
+                continue;
+            }
+
+            var everythingAfter = name[(index + localizationDirectory.Length)..];
+
+            var firstDotIndex = everythingAfter.IndexOf('.');
+            if (firstDotIndex == -1)
+            {
+                continue;
+            }
+
+            var cultureInfo = new CultureInfo(everythingAfter[..firstDotIndex].Replace('_', '-'));
+            using var resourceStream = localizationAssembly.GetManifestResourceStream(name);
+
+            var catalog = new Catalog(resourceStream, cultureInfo);
+            localizationCatalogues.Add(catalog.CultureInfo, catalog);
+        }
+
+        serviceCollection.AddSingleton(new NGetTextLocalizationProvider(localizationCatalogues));
+        serviceCollection.AddSingleton<ILocalizationProvider>
+        (
+            s => s.GetRequiredService<NGetTextLocalizationProvider>()
+        );
+
+        return serviceCollection;
+    }
+
     /// <summary>
     /// Adds all services required for Discord-integrated commands.
     /// </summary>
@@ -67,6 +128,8 @@ public static class ServiceCollectionExtensions
         // Add the helpers used for context injection.
         serviceCollection
             .TryAddScoped<ContextInjectionService>();
+
+        serviceCollection.Decorate<IDiscordRestInteractionAPI, ResponseTrackingInteractionAPI>();
 
         // Set up context injection
         serviceCollection
@@ -135,6 +198,7 @@ public static class ServiceCollectionExtensions
             .AddParser<GuildMemberParser>()
             .AddParser<RoleParser>()
             .AddParser<UserParser>()
+            .AddParser<MessageParser>()
             .AddParser<SnowflakeParser>()
             .AddParser<EmojiParser>()
             .AddParser<OneOfParser>();
@@ -144,6 +208,9 @@ public static class ServiceCollectionExtensions
         serviceCollection.TryAddScoped<FeedbackService>();
         serviceCollection.AddSingleton(FeedbackTheme.DiscordLight);
         serviceCollection.AddSingleton(FeedbackTheme.DiscordDark);
+
+        // Add the null localization provider if the end user hasn't already registered one
+        serviceCollection.TryAddSingleton<ILocalizationProvider, NullLocalizationProvider>();
 
         if (!enableSlash)
         {
@@ -203,7 +270,11 @@ public static class ServiceCollectionExtensions
     /// <param name="serviceCollection">The service collection.</param>
     /// <typeparam name="TEvent">The event type.</typeparam>
     /// <returns>The collection, with the event.</returns>
-    public static IServiceCollection AddPreExecutionEvent<TEvent>(this IServiceCollection serviceCollection)
+    public static IServiceCollection AddPreExecutionEvent
+        <
+            [MeansImplicitUse(ImplicitUseKindFlags.InstantiatedNoFixedConstructorSignature)]
+            TEvent
+        >(this IServiceCollection serviceCollection)
         where TEvent : class, IPreExecutionEvent
     {
         serviceCollection.AddScoped<IPreExecutionEvent, TEvent>();
@@ -216,7 +287,11 @@ public static class ServiceCollectionExtensions
     /// <param name="serviceCollection">The service collection.</param>
     /// <typeparam name="TEvent">The event type.</typeparam>
     /// <returns>The collection, with the event.</returns>
-    public static IServiceCollection AddPostExecutionEvent<TEvent>(this IServiceCollection serviceCollection)
+    public static IServiceCollection AddPostExecutionEvent
+        <
+            [MeansImplicitUse(ImplicitUseKindFlags.InstantiatedNoFixedConstructorSignature)]
+            TEvent
+        >(this IServiceCollection serviceCollection)
         where TEvent : class, IPostExecutionEvent
     {
         serviceCollection.AddScoped<IPostExecutionEvent, TEvent>();
@@ -229,7 +304,11 @@ public static class ServiceCollectionExtensions
     /// <param name="serviceCollection">The service collection.</param>
     /// <typeparam name="TEvent">The event type.</typeparam>
     /// <returns>The collection, with the event.</returns>
-    public static IServiceCollection AddExecutionEvent<TEvent>(this IServiceCollection serviceCollection)
+    public static IServiceCollection AddExecutionEvent
+        <
+            [MeansImplicitUse(ImplicitUseKindFlags.InstantiatedNoFixedConstructorSignature)]
+            TEvent
+        >(this IServiceCollection serviceCollection)
         where TEvent : class, IPreExecutionEvent, IPostExecutionEvent
     {
         serviceCollection
@@ -245,7 +324,11 @@ public static class ServiceCollectionExtensions
     /// <param name="serviceCollection">The service collection.</param>
     /// <typeparam name="TProvider">The autocomplete provider.</typeparam>
     /// <returns>The collection, with the provider.</returns>
-    public static IServiceCollection AddAutocompleteProvider<TProvider>(this IServiceCollection serviceCollection)
+    public static IServiceCollection AddAutocompleteProvider
+        <
+            [MeansImplicitUse(ImplicitUseKindFlags.InstantiatedNoFixedConstructorSignature)]
+            TProvider
+        >(this IServiceCollection serviceCollection)
         where TProvider : class, IAutocompleteProvider
     {
         return serviceCollection.AddAutocompleteProvider(typeof(TProvider));

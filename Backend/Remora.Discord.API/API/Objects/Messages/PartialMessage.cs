@@ -4,7 +4,7 @@
 //  Author:
 //       Jarl Gullberg <jarl.gullberg@gmail.com>
 //
-//  Copyright (c) 2017 Jarl Gullberg
+//  Copyright (c) Jarl Gullberg
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -36,15 +36,12 @@ public record PartialMessage
 (
     Optional<Snowflake> ID = default,
     Optional<Snowflake> ChannelID = default,
-    Optional<Snowflake> GuildID = default,
     Optional<IUser> Author = default,
-    Optional<IPartialGuildMember> Member = default,
     Optional<string> Content = default,
     Optional<DateTimeOffset> Timestamp = default,
     Optional<DateTimeOffset?> EditedTimestamp = default,
     Optional<bool> IsTTS = default,
     Optional<bool> MentionsEveryone = default,
-    Optional<IReadOnlyList<IUserMention>> Mentions = default,
     Optional<IReadOnlyList<Snowflake>> MentionedRoles = default,
     Optional<IReadOnlyList<IChannelMention>> MentionedChannels = default,
     Optional<IReadOnlyList<IAttachment>> Attachments = default,
@@ -63,5 +60,6 @@ public record PartialMessage
     Optional<IMessageInteraction> Interaction = default,
     Optional<IChannel> Thread = default,
     Optional<IReadOnlyList<IMessageComponent>> Components = default,
-    Optional<IReadOnlyList<IStickerItem>> StickerItems = default
+    Optional<IReadOnlyList<IStickerItem>> StickerItems = default,
+    Optional<int> Position = default
 ) : IPartialMessage;

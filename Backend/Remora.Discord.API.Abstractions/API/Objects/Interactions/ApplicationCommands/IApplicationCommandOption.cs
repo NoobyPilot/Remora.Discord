@@ -4,7 +4,7 @@
 //  Author:
 //       Jarl Gullberg <jarl.gullberg@gmail.com>
 //
-//  Copyright (c) 2017 Jarl Gullberg
+//  Copyright (c) Jarl Gullberg
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -94,4 +94,42 @@ public interface IApplicationCommandOption
     /// Gets a value indicating whether autocompletion should be enabled for this option.
     /// </summary>
     Optional<bool> EnableAutocomplete { get; }
+
+    /// <summary>
+    /// Gets the localized names of the option.
+    /// </summary>
+    Optional<IReadOnlyDictionary<string, string>?> NameLocalizations { get; }
+
+    /// <summary>
+    /// Gets the localized name of the option.
+    /// </summary>
+    /// <remarks>
+    /// This field is only supplied by Discord as a response, and is not used to set the actual localized string.
+    /// </remarks>
+    Optional<string> NameLocalized { get; }
+
+    /// <summary>
+    /// Gets the localized descriptions of the option.
+    /// </summary>
+    Optional<IReadOnlyDictionary<string, string>?> DescriptionLocalizations { get; }
+
+    /// <summary>
+    /// Gets the localized description of the option.
+    /// </summary>
+    /// <remarks>
+    /// This field is only supplied by Discord as a response, and is not used to set the actual localized string.
+    /// </remarks>
+    Optional<string> DescriptionLocalized { get; }
+
+    /// <summary>
+    /// Gets the minimum length of the value supplied to the parameter.
+    /// </summary>
+    /// <remarks>Only valid for <see cref="ApplicationCommandOptionType.String"/>.</remarks>
+    Optional<uint> MinLength { get; }
+
+    /// <summary>
+    /// Gets the maximum length of the value supplied to the parameter.
+    /// </summary>
+    /// <remarks>Only valid for <see cref="ApplicationCommandOptionType.String"/>. Minimum 1.</remarks>
+    Optional<uint> MaxLength { get; }
 }

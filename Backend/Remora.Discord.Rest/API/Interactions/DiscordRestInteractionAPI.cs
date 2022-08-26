@@ -4,7 +4,7 @@
 //  Author:
 //       Jarl Gullberg <jarl.gullberg@gmail.com>
 //
-//  Copyright (c) 2017 Jarl Gullberg
+//  Copyright (c) Jarl Gullberg
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -165,8 +165,8 @@ public class DiscordRestInteractionAPI : AbstractDiscordRestAPI, IDiscordRestInt
         Optional<string?> content = default,
         Optional<IReadOnlyList<IEmbed>?> embeds = default,
         Optional<IAllowedMentions?> allowedMentions = default,
-        Optional<IReadOnlyList<IMessageComponent>> components = default,
-        Optional<IReadOnlyList<OneOf<FileData, IPartialAttachment>>> attachments = default,
+        Optional<IReadOnlyList<IMessageComponent>?> components = default,
+        Optional<IReadOnlyList<OneOf<FileData, IPartialAttachment>>?> attachments = default,
         CancellationToken ct = default
     )
     {
@@ -185,8 +185,12 @@ public class DiscordRestInteractionAPI : AbstractDiscordRestAPI, IDiscordRestInt
             $"webhooks/{applicationID}/{token}/messages/@original",
             b =>
             {
-                Optional<IReadOnlyList<IPartialAttachment>> attachmentList = default;
-                if (attachments.HasValue)
+                Optional<IReadOnlyList<IPartialAttachment>?> attachmentList = default;
+                if (attachments.HasValue && attachments.Value is null)
+                {
+                    attachmentList = null;
+                }
+                else if (attachments.HasValue && attachments.Value is not null)
                 {
                     // build attachment list
                     attachmentList = attachments.Value.Select
@@ -337,8 +341,8 @@ public class DiscordRestInteractionAPI : AbstractDiscordRestAPI, IDiscordRestInt
         Optional<string?> content = default,
         Optional<IReadOnlyList<IEmbed>?> embeds = default,
         Optional<IAllowedMentions?> allowedMentions = default,
-        Optional<IReadOnlyList<IMessageComponent>> components = default,
-        Optional<IReadOnlyList<OneOf<FileData, IPartialAttachment>>> attachments = default,
+        Optional<IReadOnlyList<IMessageComponent>?> components = default,
+        Optional<IReadOnlyList<OneOf<FileData, IPartialAttachment>>?> attachments = default,
         CancellationToken ct = default
     )
     {
@@ -357,8 +361,12 @@ public class DiscordRestInteractionAPI : AbstractDiscordRestAPI, IDiscordRestInt
             $"webhooks/{applicationID}/{token}/messages/{messageID}",
             b =>
             {
-                Optional<IReadOnlyList<IPartialAttachment>> attachmentList = default;
-                if (attachments.HasValue)
+                Optional<IReadOnlyList<IPartialAttachment>?> attachmentList = default;
+                if (attachments.HasValue && attachments.Value is null)
+                {
+                    attachmentList = null;
+                }
+                else if (attachments.HasValue && attachments.Value is not null)
                 {
                     // build attachment list
                     attachmentList = attachments.Value.Select

@@ -4,7 +4,7 @@
 //  Author:
 //       Jarl Gullberg <jarl.gullberg@gmail.com>
 //
-//  Copyright (c) 2017 Jarl Gullberg
+//  Copyright (c) Jarl Gullberg
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -36,15 +36,12 @@ public record Message
 (
     Snowflake ID,
     Snowflake ChannelID,
-    Optional<Snowflake> GuildID,
     IUser Author,
-    Optional<IPartialGuildMember> Member,
     string Content,
     DateTimeOffset Timestamp,
     DateTimeOffset? EditedTimestamp,
     bool IsTTS,
     bool MentionsEveryone,
-    IReadOnlyList<IUserMention> Mentions,
     IReadOnlyList<Snowflake> MentionedRoles,
     Optional<IReadOnlyList<IChannelMention>> MentionedChannels,
     IReadOnlyList<IAttachment> Attachments,
@@ -63,5 +60,6 @@ public record Message
     Optional<IMessageInteraction> Interaction = default,
     Optional<IChannel> Thread = default,
     Optional<IReadOnlyList<IMessageComponent>> Components = default,
-    Optional<IReadOnlyList<IStickerItem>> StickerItems = default
+    Optional<IReadOnlyList<IStickerItem>> StickerItems = default,
+    Optional<int> Position = default
 ) : IMessage;

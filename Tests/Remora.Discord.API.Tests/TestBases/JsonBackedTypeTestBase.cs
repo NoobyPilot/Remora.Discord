@@ -4,7 +4,7 @@
 //  Author:
 //       Jarl Gullberg <jarl.gullberg@gmail.com>
 //
-//  Copyright (c) 2017 Jarl Gullberg
+//  Copyright (c) Jarl Gullberg
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -48,11 +48,6 @@ public abstract class JsonBackedTypeTestBase<TType, TSampleSource> where TSample
     public static TheoryData SampleSource => new TSampleSource();
 
     /// <summary>
-    /// Gets the sample data service.
-    /// </summary>
-    protected SampleDataService SampleData { get; }
-
-    /// <summary>
     /// Gets the configured JSON serializer options.
     /// </summary>
     protected JsonSerializerOptions Options { get; }
@@ -75,11 +70,9 @@ public abstract class JsonBackedTypeTestBase<TType, TSampleSource> where TSample
         // ReSharper disable once VirtualMemberCallInConstructor
         var services = new ServiceCollection()
             .ConfigureDiscordJsonConverters(allowUnknownEvents: this.AllowUnknownEvents)
-            .AddSingleton<SampleDataService>()
             .AddExperimentalDiscordApi()
             .BuildServiceProvider(true);
 
-        this.SampleData = services.GetRequiredService<SampleDataService>();
         this.Options = services.GetRequiredService<IOptionsMonitor<JsonSerializerOptions>>()
             .Get("Discord");
     }
@@ -113,7 +106,7 @@ public abstract class JsonBackedTypeTestBase<TType, TSampleSource> where TSample
         Assert.NotNull(payload);
 
         await using var stream = new MemoryStream();
-        await JsonSerializer.SerializeAsync(stream, payload!, this.Options);
+        await JsonSerializer.SerializeAsync(stream, payload, this.Options);
     }
 
     /// <summary>
@@ -132,7 +125,7 @@ public abstract class JsonBackedTypeTestBase<TType, TSampleSource> where TSample
         Assert.NotNull(deserialized);
 
         await using var stream = new MemoryStream();
-        await JsonSerializer.SerializeAsync(stream, deserialized!, this.Options);
+        await JsonSerializer.SerializeAsync(stream, deserialized, this.Options);
 
         await stream.FlushAsync();
 

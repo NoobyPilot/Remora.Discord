@@ -4,7 +4,7 @@
 //  Author:
 //       Jarl Gullberg <jarl.gullberg@gmail.com>
 //
-//  Copyright (c) 2017 Jarl Gullberg
+//  Copyright (c) Jarl Gullberg
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -24,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 using Remora.Discord.API.Abstractions.Objects;
 
 #pragma warning disable SA1402
@@ -34,6 +35,7 @@ namespace Remora.Discord.Commands.Autocomplete;
 /// Glue interface for type-specific autocomplete providers.
 /// </summary>
 /// <typeparam name="T">The type the provider suggests autocompletion for.</typeparam>
+[PublicAPI]
 public interface IAutocompleteProvider<T> : IAutocompleteProvider
 {
     /// <summary>
@@ -48,6 +50,7 @@ public interface IAutocompleteProvider<T> : IAutocompleteProvider
 /// <summary>
 /// Represents the public interface of an autocomplete provider.
 /// </summary>
+[PublicAPI]
 public interface IAutocompleteProvider
 {
     /// <summary>

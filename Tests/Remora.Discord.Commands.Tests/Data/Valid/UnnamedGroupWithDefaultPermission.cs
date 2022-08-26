@@ -4,7 +4,7 @@
 //  Author:
 //       Jarl Gullberg <jarl.gullberg@gmail.com>
 //
-//  Copyright (c) 2017 Jarl Gullberg
+//  Copyright (c) Jarl Gullberg
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -24,6 +24,7 @@ using System;
 using System.Threading.Tasks;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
+using Remora.Discord.API.Abstractions.Objects;
 using Remora.Discord.Commands.Attributes;
 using Remora.Results;
 
@@ -32,7 +33,7 @@ namespace Remora.Discord.Commands.Tests.Data.Valid;
 /// <summary>
 /// A group with a default permission set.
 /// </summary>
-[DiscordDefaultPermission(true)]
+[DiscordDefaultMemberPermissions(DiscordPermission.Administrator)]
 public class UnnamedGroupWithDefaultPermission : CommandGroup
 {
     /// <summary>

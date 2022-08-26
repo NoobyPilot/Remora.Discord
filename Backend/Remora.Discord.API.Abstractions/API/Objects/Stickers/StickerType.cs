@@ -4,7 +4,7 @@
 //  Author:
 //       Jarl Gullberg <jarl.gullberg@gmail.com>
 //
-//  Copyright (c) 2017 Jarl Gullberg
+//  Copyright (c) Jarl Gullberg
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -36,7 +36,7 @@ public enum StickerType
     Standard = 1,
 
     /// <summary>
-    /// A sticker uploaded to a boosted guild for the guild's members.
+    /// A sticker uploaded to a guild for the guild's members.
     /// </summary>
     Guild = 2
 }

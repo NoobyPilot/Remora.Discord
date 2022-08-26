@@ -4,7 +4,7 @@
 //  Author:
 //       Jarl Gullberg <jarl.gullberg@gmail.com>
 //
-//  Copyright (c) 2017 Jarl Gullberg
+//  Copyright (c) Jarl Gullberg
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -60,7 +60,12 @@ public class AttachmentParser : AbstractTypeParser<IAttachment>
             return new(new ParsingError<IAttachment>(token, "Invalid attachment ID."));
         }
 
-        if (!interactionContext.Data.Resolved.IsDefined(out var resolvedData))
+        if (!interactionContext.Data.TryPickT0(out var commandData, out _))
+        {
+            return new(new ParsingError<IAttachment>(token, "Cannot parse attachments without command data."));
+        }
+
+        if (!commandData.Resolved.IsDefined(out var resolvedData))
         {
             return new(new ParsingError<IAttachment>(token, "Cannot parse attachments without resolved data."));
         }

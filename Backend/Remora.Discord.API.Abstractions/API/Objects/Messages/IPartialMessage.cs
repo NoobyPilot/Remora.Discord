@@ -4,7 +4,7 @@
 //  Author:
 //       Jarl Gullberg <jarl.gullberg@gmail.com>
 //
-//  Copyright (c) 2017 Jarl Gullberg
+//  Copyright (c) Jarl Gullberg
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -39,14 +39,8 @@ public interface IPartialMessage
     /// <inheritdoc cref="IMessage.ChannelID" />
     Optional<Snowflake> ChannelID { get; }
 
-    /// <inheritdoc cref="IMessage.GuildID" />
-    Optional<Snowflake> GuildID { get; }
-
     /// <inheritdoc cref="IMessage.Author" />
     Optional<IUser> Author { get; }
-
-    /// <inheritdoc cref="IMessage.Member" />
-    Optional<IPartialGuildMember> Member { get; }
 
     /// <inheritdoc cref="IMessage.Content" />
     Optional<string> Content { get; }
@@ -62,9 +56,6 @@ public interface IPartialMessage
 
     /// <inheritdoc cref="IMessage.MentionsEveryone" />
     Optional<bool> MentionsEveryone { get; }
-
-    /// <inheritdoc cref="IMessage.Mentions" />
-    Optional<IReadOnlyList<IUserMention>> Mentions { get; }
 
     /// <inheritdoc cref="IMessage.MentionedRoles" />
     Optional<IReadOnlyList<Snowflake>> MentionedRoles { get; }
@@ -122,4 +113,7 @@ public interface IPartialMessage
 
     /// <inheritdoc cref="IMessage.StickerItems" />
     Optional<IReadOnlyList<IStickerItem>> StickerItems { get; }
+
+    /// <inheritdoc cref="IMessage.Position" />
+    Optional<int> Position { get; }
 }

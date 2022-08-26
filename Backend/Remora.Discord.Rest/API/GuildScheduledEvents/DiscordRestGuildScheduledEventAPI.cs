@@ -4,7 +4,7 @@
 //  Author:
 //       Jarl Gullberg <jarl.gullberg@gmail.com>
 //
-//  Copyright (c) 2017 Jarl Gullberg
+//  Copyright (c) Jarl Gullberg
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -125,19 +125,13 @@ public class DiscordRestGuildScheduledEventAPI : AbstractDiscordRestAPI, IDiscor
             );
         }
 
-        var imageData = default(Optional<string?>);
-
-        if (image.IsDefined(out var imageStream))
+        var packImage = await ImagePacker.PackImageAsync(image!, ct);
+        if (!packImage.IsSuccess)
         {
-            var imageDataResult = await ImagePacker.PackImageAsync(imageStream, ct);
-
-            if (!imageDataResult.IsSuccess)
-            {
-                return Result<IGuildScheduledEvent>.FromError(imageDataResult.Error);
-            }
-
-            imageData = imageDataResult.Entity;
+            return Result<IGuildScheduledEvent>.FromError(packImage);
         }
+
+        Optional<string> imageData = packImage.Entity!;
 
         return await this.RestHttpClient.PostAsync<IGuildScheduledEvent>
         (
@@ -243,19 +237,13 @@ public class DiscordRestGuildScheduledEventAPI : AbstractDiscordRestAPI, IDiscor
             );
         }
 
-        var imageData = default(Optional<string?>);
-
-        if (image.IsDefined(out var imageStream))
+        var packImage = await ImagePacker.PackImageAsync(image!, ct);
+        if (!packImage.IsSuccess)
         {
-            var imageDataResult = await ImagePacker.PackImageAsync(imageStream, ct);
-
-            if (!imageDataResult.IsSuccess)
-            {
-                return Result<IGuildScheduledEvent>.FromError(imageDataResult.Error);
-            }
-
-            imageData = imageDataResult.Entity;
+            return Result<IGuildScheduledEvent>.FromError(packImage);
         }
+
+        Optional<string> imageData = packImage.Entity!;
 
         return await this.RestHttpClient.PatchAsync<IGuildScheduledEvent>
         (

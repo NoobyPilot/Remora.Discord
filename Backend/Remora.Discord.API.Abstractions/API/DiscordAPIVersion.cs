@@ -4,7 +4,7 @@
 //  Author:
 //       Jarl Gullberg <jarl.gullberg@gmail.com>
 //
-//  Copyright (c) 2017 Jarl Gullberg
+//  Copyright (c) Jarl Gullberg
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -31,24 +31,6 @@ namespace Remora.Discord.API.Abstractions;
 [PublicAPI]
 public enum DiscordAPIVersion
 {
-    /// <summary>
-    /// Version 3 of the API.
-    /// </summary>
-    [Obsolete("Discontinued", true)]
-    V3 = 3,
-
-    /// <summary>
-    /// Version 4 of the API.
-    /// </summary>
-    [Obsolete("Discontinued", true)]
-    V4 = 4,
-
-    /// <summary>
-    /// Version 5 of the API.
-    /// </summary>
-    [Obsolete("Discontinued", true)]
-    V5 = 5,
-
     /// <summary>
     /// Version 6 of the API.
     /// </summary>
@@ -78,7 +60,13 @@ public enum DiscordAPIVersion
     V10 = 10,
 
     /// <summary>
+    /// The default version of the API.
+    /// </summary>
+    [Obsolete("The default API version is currently obsolete. Use a more recent version for new applications.")]
+    Default = V6,
+
+    /// <summary>
     /// The stable version of the API.
     /// </summary>
-    Stable = V9
+    Stable = V10
 }

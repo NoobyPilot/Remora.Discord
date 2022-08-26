@@ -4,7 +4,7 @@
 //  Author:
 //       Jarl Gullberg <jarl.gullberg@gmail.com>
 //
-//  Copyright (c) 2017 Jarl Gullberg
+//  Copyright (c) Jarl Gullberg
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -36,7 +36,7 @@ using Remora.Discord.Hosting.Extensions;
 using Remora.Discord.Interactivity.Extensions;
 using Remora.Discord.Pagination.Extensions;
 using Remora.Discord.Samples.Interactivity.Commands;
-using Remora.Discord.Samples.Interactivity.Entities;
+using Remora.Discord.Samples.Interactivity.Interactions;
 using Remora.Rest.Core;
 
 namespace Remora.Discord.Samples.Interactivity;
@@ -128,9 +128,9 @@ public class Program
                     .AddCommandTree()
                         .WithCommandGroup<InteractiveCommands>()
                         .Finish()
-                    .AddInteractivity()
                     .AddPagination()
-                    .AddInteractiveEntity<ColourDropdownEntity>();
+                    .AddInteractionGroup<ColourDropdownInteractions>()
+                    .AddInteractionGroup<ModalInteractions>();
             }
         )
         .ConfigureLogging

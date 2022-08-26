@@ -1,14 +1,15 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Remora.Sdk/1.0.0">
 
     <PropertyGroup>
-        <TargetFrameworks>netstandard2.1;net5.0;net6.0</TargetFrameworks>
+        <TargetFrameworks>netstandard2.1;net6.0</TargetFrameworks>
         <RootNamespace>Remora.Discord</RootNamespace>
     </PropertyGroup>
 
     <PropertyGroup>
-        <Version>6.0.4</Version>
+        <VersionPrefix>6.0.20</VersionPrefix>
         <Description>Unstable or experimental features of Remora.Discord</Description>
         <PackageReleaseNotes>
+            Use Remora.Sdk and friends.
             Update dependencies.
         </PackageReleaseNotes>
     </PropertyGroup>
@@ -16,11 +17,6 @@
     <ItemGroup>
       <ProjectReference Include="..\Remora.Discord.API\Remora.Discord.API.csproj" />
       <ProjectReference Include="..\Remora.Discord.Rest\Remora.Discord.Rest.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <PackageReference Include="Microsoft.Extensions.Options" Version="6.0.0" />
-      <PackageReference Include="System.Text.Json" Version="6.0.2" />
     </ItemGroup>
 
     <ItemGroup>

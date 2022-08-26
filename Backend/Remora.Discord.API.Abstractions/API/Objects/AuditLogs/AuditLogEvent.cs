@@ -4,7 +4,7 @@
 //  Author:
 //       Jarl Gullberg <jarl.gullberg@gmail.com>
 //
-//  Copyright (c) 2017 Jarl Gullberg
+//  Copyright (c) Jarl Gullberg
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -263,5 +263,10 @@ public enum AuditLogEvent
     /// <summary>
     /// A thread was deleted.
     /// </summary>
-    ThreadDelete = 112
+    ThreadDelete = 112,
+
+    /// <summary>
+    /// The permissions for an application command were updated.
+    /// </summary>
+    ApplicationCommandPermissionUpdate = 121
 }

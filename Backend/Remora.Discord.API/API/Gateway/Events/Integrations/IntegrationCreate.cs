@@ -4,7 +4,7 @@
 //  Author:
 //       Jarl Gullberg <jarl.gullberg@gmail.com>
 //
-//  Copyright (c) 2017 Jarl Gullberg
+//  Copyright (c) Jarl Gullberg
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -24,7 +24,6 @@ using System;
 using JetBrains.Annotations;
 using Remora.Discord.API.Abstractions.Gateway.Events;
 using Remora.Discord.API.Abstractions.Objects;
-using Remora.Discord.API.Objects;
 using Remora.Rest.Core;
 
 namespace Remora.Discord.API.Gateway.Events;
@@ -36,7 +35,7 @@ public record IntegrationCreate
     Snowflake ID,
     string Name,
     string Type,
-    bool IsEnabled,
+    Optional<bool> IsEnabled,
     bool IsSyncing,
     Snowflake RoleID,
     Optional<bool> EnableEmoticons,
@@ -49,21 +48,4 @@ public record IntegrationCreate
     bool IsRevoked,
     Optional<IIntegrationApplication> Application,
     Snowflake GuildID
-) : Integration
-(
-    ID,
-    Name,
-    Type,
-    IsEnabled,
-    IsSyncing,
-    RoleID,
-    EnableEmoticons,
-    ExpireBehaviour,
-    ExpireGracePeriod,
-    User,
-    Account,
-    SyncedAt,
-    SubscriberCount,
-    IsRevoked,
-    Application
-), IIntegrationCreate;
+) : IIntegrationCreate;

@@ -4,7 +4,7 @@
 //  Author:
 //       Jarl Gullberg <jarl.gullberg@gmail.com>
 //
-//  Copyright (c) 2017 Jarl Gullberg
+//  Copyright (c) Jarl Gullberg
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -48,7 +48,7 @@ namespace Remora.Discord.Commands.Tests.Extensions;
 public class CommandTreeExtensionTests
 {
     /// <summary>
-    /// Tests the <see cref="CommandTreeExtensions.CreateApplicationCommands"/> method.
+    /// Tests the <see cref="CommandTreeExtensions.CreateApplicationCommands(CommandTree)"/> method.
     /// </summary>
     public class CreateApplicationCommands
     {
@@ -242,6 +242,23 @@ public class CommandTreeExtensionTests
             /// Tests whether the method responds appropriately to a failure case.
             /// </summary>
             [Fact]
+            public void ReturnsUnsuccessfulIfMultipleNamedGroupsWithTheSameNameHaveADefaultDMPermissionAttribute()
+            {
+                var builder = new CommandTreeBuilder();
+                builder.RegisterModule<AtMostOneDMPermissionAttributeAllowed.Named.GroupOne>();
+                builder.RegisterModule<AtMostOneDMPermissionAttributeAllowed.Named.GroupTwo>();
+
+                var tree = builder.Build();
+
+                var result = tree.CreateApplicationCommands();
+
+                ResultAssert.Unsuccessful(result);
+            }
+
+            /// <summary>
+            /// Tests whether the method responds appropriately to a failure case.
+            /// </summary>
+            [Fact]
             public void ReturnsUnsuccessfulIfContextMenuHasDescription()
             {
                 var builder = new CommandTreeBuilder();
@@ -272,15 +289,14 @@ public class CommandTreeExtensionTests
             /// Tests whether the method responds appropriately to a failure case.
             /// </summary>
             [Fact]
-            public void ReturnsUnsuccessfulIfContextMenuHasParameters()
+            public void ThrowsIfContextMenuHasInvalidParameters()
             {
                 var builder = new CommandTreeBuilder();
-                builder.RegisterModule<ContextMenusWithParametersAreNotSupported>();
+                builder.RegisterModule<ContextMenusWithInvalidParametersAreNotSupported>();
 
                 var tree = builder.Build();
 
-                var result = tree.CreateApplicationCommands();
-                ResultAssert.Unsuccessful(result);
+                Assert.Throws<InvalidOperationException>(() => tree.CreateApplicationCommands());
             }
 
             /// <summary>
@@ -306,6 +322,96 @@ public class CommandTreeExtensionTests
             {
                 var builder = new CommandTreeBuilder();
                 builder.RegisterModule<ChannelTypesAttributeRequiresAtLeastOneValue>();
+
+                var tree = builder.Build();
+
+                var result = tree.CreateApplicationCommands();
+                ResultAssert.Unsuccessful(result);
+            }
+
+            /// <summary>
+            /// Tests whether the method responds appropriately to a failure case.
+            /// </summary>
+            [Fact]
+            public void ReturnsUnsuccessfulIfMinLengthConstraintIsInvalid()
+            {
+                var builder = new CommandTreeBuilder();
+                builder.RegisterModule<InvalidLengthConstraints.InvalidMinLengthConstraint>();
+
+                var tree = builder.Build();
+
+                var result = tree.CreateApplicationCommands();
+                ResultAssert.Unsuccessful(result);
+            }
+
+            /// <summary>
+            /// Tests whether the method responds appropriately to a failure case.
+            /// </summary>
+            [Fact]
+            public void ReturnsUnsuccessfulIfMaxLengthConstraintIsInvalid()
+            {
+                var builder = new CommandTreeBuilder();
+                builder.RegisterModule<InvalidLengthConstraints.InvalidMaxLengthConstraint>();
+
+                var tree = builder.Build();
+
+                var result = tree.CreateApplicationCommands();
+                ResultAssert.Unsuccessful(result);
+            }
+
+            /// <summary>
+            /// Tests whether the method responds appropriately to a failure case.
+            /// </summary>
+            [Fact]
+            public void ReturnsUnsuccessfulIfMinLengthConstraintIsInvalidButMaxIsValid()
+            {
+                var builder = new CommandTreeBuilder();
+                builder.RegisterModule<InvalidLengthConstraints.InvalidMinAndValidMaxLengthConstraint>();
+
+                var tree = builder.Build();
+
+                var result = tree.CreateApplicationCommands();
+                ResultAssert.Unsuccessful(result);
+            }
+
+            /// <summary>
+            /// Tests whether the method responds appropriately to a failure case.
+            /// </summary>
+            [Fact]
+            public void ReturnsUnsuccessfulIfMaxLengthConstraintIsInvalidButMinIsValid()
+            {
+                var builder = new CommandTreeBuilder();
+                builder.RegisterModule<InvalidLengthConstraints.ValidMinAndInvalidMaxLengthConstraint>();
+
+                var tree = builder.Build();
+
+                var result = tree.CreateApplicationCommands();
+                ResultAssert.Unsuccessful(result);
+            }
+
+            /// <summary>
+            /// Tests whether the method responds appropriately to a failure case.
+            /// </summary>
+            [Fact]
+            public void ReturnsUnsuccessfulIfMinLengthConstraintIsAppliedToAnIncompatibleType()
+            {
+                var builder = new CommandTreeBuilder();
+                builder.RegisterModule<InvalidLengthConstraints.MinConstraintOnIncompatibleParameterType>();
+
+                var tree = builder.Build();
+
+                var result = tree.CreateApplicationCommands();
+                ResultAssert.Unsuccessful(result);
+            }
+
+            /// <summary>
+            /// Tests whether the method responds appropriately to a failure case.
+            /// </summary>
+            [Fact]
+            public void ReturnsUnsuccessfulIfMaxLengthConstraintIsAppliedToAnIncompatibleType()
+            {
+                var builder = new CommandTreeBuilder();
+                builder.RegisterModule<InvalidLengthConstraints.MaxConstraintOnIncompatibleParameterType>();
 
                 var tree = builder.Build();
 
@@ -359,7 +465,7 @@ public class CommandTreeExtensionTests
                 var topLevelGroup = commands.FirstOrDefault(c => c.Name == "top-level-group");
                 Assert.NotNull(topLevelGroup);
 
-                Assert.True(topLevelGroup!.Options.HasValue);
+                Assert.True(topLevelGroup.Options.HasValue);
                 Assert.Equal(2, topLevelGroup.Options.Value.Count);
 
                 var firstNestedCommand = topLevelGroup.Options.Value.FirstOrDefault(c => c.Type == SubCommand);
@@ -368,7 +474,7 @@ public class CommandTreeExtensionTests
                 var nestedGroup = topLevelGroup.Options.Value.FirstOrDefault(c => c.Type == SubCommandGroup);
                 Assert.NotNull(nestedGroup);
 
-                Assert.True(nestedGroup!.Options.HasValue);
+                Assert.True(nestedGroup.Options.HasValue);
                 Assert.Single(nestedGroup.Options.Value);
 
                 var secondNestedCommand = nestedGroup.Options.Value.FirstOrDefault(c => c.Type == SubCommand);
@@ -423,7 +529,7 @@ public class CommandTreeExtensionTests
                 Assert.NotNull(commands);
 
                 var command = commands.SingleOrDefault();
-                Assert.True(command!.DefaultPermission.Value);
+                Assert.Equal(8, command!.DefaultMemberPermissions?.Value);
             }
 
             /// <summary>
@@ -444,7 +550,7 @@ public class CommandTreeExtensionTests
                 Assert.NotNull(commands);
 
                 var command = commands.SingleOrDefault();
-                Assert.True(command!.DefaultPermission.Value);
+                Assert.Equal(8, command!.DefaultMemberPermissions?.Value);
             }
 
             /// <summary>
@@ -468,8 +574,38 @@ public class CommandTreeExtensionTests
                 var a = commands[0];
                 var b = commands[1];
 
-                Assert.True(a.DefaultPermission.Value);
-                Assert.False(b.DefaultPermission.Value);
+                Assert.Equal(8, a.DefaultMemberPermissions?.Value);
+                Assert.Equal(4, b.DefaultMemberPermissions?.Value);
+            }
+
+            /// <summary>
+            /// Tests whether the method responds appropriately to a successful case.
+            /// </summary>
+            [Fact]
+            public void CreatesUngroupedTopLevelCommandsWithDefaultDMPermissionCorrectly()
+            {
+                var builder = new CommandTreeBuilder();
+                builder.RegisterModule<MultipleCommandsWithDMPermission.GroupOne>();
+                builder.RegisterModule<MultipleCommandsWithDMPermission.GroupTwo>();
+                var tree = builder.Build();
+
+                var result = tree.CreateApplicationCommands();
+                ResultAssert.Successful(result);
+            }
+
+            /// <summary>
+            /// Tests whether the method responds appropriately to a successful case.
+            /// </summary>
+            [Fact]
+            public void CreatesMultipartGroupWithDefaultDMPermissionCorrectly()
+            {
+                var builder = new CommandTreeBuilder();
+                builder.RegisterModule<MultipartNamedGroupWithDMPermission>();
+
+                var tree = builder.Build();
+
+                var result = tree.CreateApplicationCommands();
+                ResultAssert.Successful(result);
             }
 
             /// <summary>
@@ -488,13 +624,17 @@ public class CommandTreeExtensionTests
 
                 var commands = result.Entity;
 
-                Assert.Equal(2, commands.Count);
+                Assert.Equal(4, commands.Count);
 
                 var user = commands[0];
                 var message = commands[1];
+                var userParameter = commands[2];
+                var messageParameter = commands[3];
 
                 Assert.Equal(ApplicationCommandType.User, user.Type.Value);
                 Assert.Equal(ApplicationCommandType.Message, message.Type.Value);
+                Assert.Equal(ApplicationCommandType.User, userParameter.Type.Value);
+                Assert.Equal(ApplicationCommandType.Message, messageParameter.Type.Value);
             }
 
             /// <summary>
@@ -520,6 +660,75 @@ public class CommandTreeExtensionTests
 
                 Assert.Equal(ApplicationCommandType.ChatInput, normal.Type.Value);
                 Assert.Equal(ApplicationCommandType.Message, message.Type.Value);
+            }
+
+            /// <summary>
+            /// Tests whether the method responds appropriately to a successful case.
+            /// </summary>
+            [Fact]
+            public void CreatesMinLengthConstrainedParametersCorrectly()
+            {
+                var builder = new CommandTreeBuilder();
+                builder.RegisterModule<StringParameterWithLengthConstraints.MinLengthConstraint>();
+
+                var tree = builder.Build();
+
+                var result = tree.CreateApplicationCommands();
+                ResultAssert.Successful(result);
+
+                var commands = result.Entity;
+
+                var command = commands.Single();
+                var parameter = command.Options.Value.Single();
+
+                Assert.Equal(0u, parameter.MinLength.Value);
+                Assert.False(parameter.MaxLength.HasValue);
+            }
+
+            /// <summary>
+            /// Tests whether the method responds appropriately to a successful case.
+            /// </summary>
+            [Fact]
+            public void CreatesMaxLengthConstrainedParametersCorrectly()
+            {
+                var builder = new CommandTreeBuilder();
+                builder.RegisterModule<StringParameterWithLengthConstraints.MaxLengthConstraint>();
+
+                var tree = builder.Build();
+
+                var result = tree.CreateApplicationCommands();
+                ResultAssert.Successful(result);
+
+                var commands = result.Entity;
+
+                var command = commands.Single();
+                var parameter = command.Options.Value.Single();
+
+                Assert.Equal(1u, parameter.MaxLength.Value);
+                Assert.False(parameter.MinLength.HasValue);
+            }
+
+            /// <summary>
+            /// Tests whether the method responds appropriately to a successful case.
+            /// </summary>
+            [Fact]
+            public void CreatesMinAndMaxLengthConstrainedParametersCorrectly()
+            {
+                var builder = new CommandTreeBuilder();
+                builder.RegisterModule<StringParameterWithLengthConstraints.MinAndMaxLengthConstraint>();
+
+                var tree = builder.Build();
+
+                var result = tree.CreateApplicationCommands();
+                ResultAssert.Successful(result);
+
+                var commands = result.Entity;
+
+                var command = commands.Single();
+                var parameter = command.Options.Value.Single();
+
+                Assert.Equal(0u, parameter.MinLength.Value);
+                Assert.Equal(1u, parameter.MaxLength.Value);
             }
         }
 
@@ -604,7 +813,7 @@ public class CommandTreeExtensionTests
                     typeof(SpecialTypedCommands),
                     "typed-channel-value",
                     ApplicationCommandOptionType.Channel,
-                    new Action<ChannelType>[] { c => Assert.Equal(c, ChannelType.GuildText) }
+                    new Action<ChannelType>[] { c => Assert.Equal(ChannelType.GuildText, c) }
                 },
                 new object[]
                 {
@@ -709,7 +918,7 @@ public class CommandTreeExtensionTests
                 var command = commands.FirstOrDefault(c => c.Name == commandName);
                 Assert.NotNull(command);
 
-                var parameter = command!.Options.Value[0];
+                var parameter = command.Options.Value[0];
                 Assert.Equal(type, parameter.Type);
 
                 if (choiceAsserter is not null)
@@ -761,7 +970,7 @@ public class CommandTreeExtensionTests
                     var command = commands.FirstOrDefault(c => c.Name == commandName);
                     Assert.NotNull(command);
 
-                    var parameter = command!.Options.Value[0];
+                    var parameter = command.Options.Value[0];
                     Assert.Equal(type, parameter.Type);
                 }
 
@@ -812,7 +1021,7 @@ public class CommandTreeExtensionTests
                     var command = commands.FirstOrDefault(c => c.Name == commandName);
                     Assert.NotNull(command);
 
-                    var parameter = command!.Options.Value[0];
+                    var parameter = command.Options.Value[0];
                     Assert.Equal(type, parameter.Type);
                 }
 
@@ -881,7 +1090,7 @@ public class CommandTreeExtensionTests
                     var command = commands.FirstOrDefault(c => c.Name == commandName);
                     Assert.NotNull(command);
 
-                    var parameter = command!.Options.Value[0];
+                    var parameter = command.Options.Value[0];
                     Assert.Equal(type, parameter.Type);
                 }
 
@@ -1095,7 +1304,6 @@ public class CommandTreeExtensionTests
                     commandNode.Key,
                     string.Empty,
                     default,
-                    default,
                     default
                 )
             };
@@ -1136,7 +1344,6 @@ public class CommandTreeExtensionTests
                     commandNodeA.Key,
                     string.Empty,
                     default,
-                    default,
                     default
                 ),
                 new ApplicationCommand
@@ -1147,7 +1354,6 @@ public class CommandTreeExtensionTests
                     default,
                     commandNodeB.Key,
                     string.Empty,
-                    default,
                     default,
                     default
                 )
@@ -1195,7 +1401,6 @@ public class CommandTreeExtensionTests
                     {
                         new ApplicationCommandOption(SubCommand, commandNode.Key, string.Empty)
                     },
-                    default,
                     default
                 )
             };
@@ -1246,7 +1451,6 @@ public class CommandTreeExtensionTests
                         new ApplicationCommandOption(SubCommand, commandNodeB.Key, string.Empty),
                         new ApplicationCommandOption(SubCommand, commandNodeC.Key, string.Empty)
                     },
-                    default,
                     default
                 )
             };
@@ -1304,7 +1508,6 @@ public class CommandTreeExtensionTests
                             new ApplicationCommandOption(SubCommand, commandNode.Key, string.Empty)
                         })
                     },
-                    default,
                     default
                 )
             };
@@ -1367,7 +1570,6 @@ public class CommandTreeExtensionTests
                         new ApplicationCommandOption(SubCommand, commandNodeE.Key, string.Empty),
                         new ApplicationCommandOption(SubCommand, commandNodeF.Key, string.Empty)
                     },
-                    default,
                     default
                 ),
                 new ApplicationCommand
@@ -1378,7 +1580,6 @@ public class CommandTreeExtensionTests
                     default,
                     commandNodeG.Key,
                     string.Empty,
-                    default,
                     default,
                     default
                 )

@@ -4,7 +4,7 @@
 //  Author:
 //       Jarl Gullberg <jarl.gullberg@gmail.com>
 //
-//  Copyright (c) 2017 Jarl Gullberg
+//  Copyright (c) Jarl Gullberg
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -46,11 +46,6 @@ public enum GuildFeature
     Banner,
 
     /// <summary>
-    /// The guild has access to use commerce features (i.e, create store channels).
-    /// </summary>
-    Commerce,
-
-    /// <summary>
     /// The guild has community features enabled.
     /// </summary>
     Community,
@@ -86,7 +81,7 @@ public enum GuildFeature
     MoreStickers,
 
     /// <summary>
-    /// The guild has access to creating news channels.
+    /// The guild has access to creating announcement channels.
     /// </summary>
     News,
 

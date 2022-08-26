@@ -4,7 +4,7 @@
 //  Author:
 //       Jarl Gullberg <jarl.gullberg@gmail.com>
 //
-//  Copyright (c) 2017 Jarl Gullberg
+//  Copyright (c) Jarl Gullberg
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -20,8 +20,10 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
+using System.Collections.Generic;
 using JetBrains.Annotations;
 using OneOf;
+using Remora.Rest.Core;
 
 namespace Remora.Discord.API.Abstractions.Objects;
 
@@ -41,4 +43,17 @@ public interface IApplicationCommandOptionChoice
     /// Gets the value of the choice.
     /// </summary>
     OneOf<string, int, double> Value { get; }
+
+    /// <summary>
+    /// Gets the localized names of the option.
+    /// </summary>
+    Optional<IReadOnlyDictionary<string, string>?> NameLocalizations { get; }
+
+    /// <summary>
+    /// Gets the localized name of the option.
+    /// </summary>
+    /// <remarks>
+    /// This field is only supplied by Discord as a response, and is not used to set the actual localized string.
+    /// </remarks>
+    Optional<string> NameLocalized { get; }
 }

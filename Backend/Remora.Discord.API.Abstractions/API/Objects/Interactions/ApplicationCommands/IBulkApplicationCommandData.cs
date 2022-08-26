@@ -4,7 +4,7 @@
 //  Author:
 //       Jarl Gullberg <jarl.gullberg@gmail.com>
 //
-//  Copyright (c) 2017 Jarl Gullberg
+//  Copyright (c) Jarl Gullberg
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -36,14 +36,26 @@ public interface IBulkApplicationCommandData
     string Name { get; }
 
     /// <inheritdoc cref="IApplicationCommand.Description"/>
-    Optional<string> Description { get; }
+    string Description { get; }
+
+    /// <inheritdoc cref="IApplicationCommand.ID"/>
+    Optional<Snowflake> ID { get; }
 
     /// <inheritdoc cref="IApplicationCommand.Options"/>
     Optional<IReadOnlyList<IApplicationCommandOption>> Options { get; }
 
-    /// <inheritdoc cref="IApplicationCommand.DefaultPermission"/>
-    Optional<bool> DefaultPermission { get; }
-
     /// <inheritdoc cref="IApplicationCommand.Type"/>
     Optional<ApplicationCommandType> Type { get; }
+
+    /// <inheritdoc cref="IApplicationCommand.NameLocalizations"/>
+    Optional<IReadOnlyDictionary<string, string>?> NameLocalizations { get; }
+
+    /// <inheritdoc cref="IApplicationCommand.DescriptionLocalizations"/>
+    Optional<IReadOnlyDictionary<string, string>?> DescriptionLocalizations { get; }
+
+    /// <inheritdoc cref="IApplicationCommand.DefaultMemberPermissions"/>
+    IDiscordPermissionSet? DefaultMemberPermissions { get; }
+
+    /// <inheritdoc cref="IApplicationCommand.DMPermission"/>
+    Optional<bool> DMPermission { get; }
 }

@@ -4,7 +4,7 @@
 //  Author:
 //       Jarl Gullberg <jarl.gullberg@gmail.com>
 //
-//  Copyright (c) 2017 Jarl Gullberg
+//  Copyright (c) Jarl Gullberg
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -21,6 +21,7 @@
 //
 
 using JetBrains.Annotations;
+using OneOf;
 using Remora.Rest.Core;
 
 namespace Remora.Discord.API.Abstractions.Objects;
@@ -47,9 +48,9 @@ public interface IInteraction
     InteractionType Type { get; }
 
     /// <summary>
-    /// Gets the command data payload.
+    /// Gets the data payload.
     /// </summary>
-    Optional<IInteractionData> Data { get; }
+    Optional<OneOf<IApplicationCommandData, IMessageComponentData, IModalSubmitData>> Data { get; }
 
     /// <summary>
     /// Gets the ID of the guild the interaction was sent from.
@@ -88,10 +89,20 @@ public interface IInteraction
     Optional<IMessage> Message { get; }
 
     /// <summary>
+    /// Gets the computed permissions for the application in the context of the interaction's execution.
+    /// </summary>
+    Optional<IDiscordPermissionSet> AppPermissions { get; }
+
+    /// <summary>
     /// Gets the locale of the invoking user.
     /// </summary>
     /// <remarks>
     /// This is sent for all interaction types, except <see cref="InteractionType.Ping"/>.
     /// </remarks>
     Optional<string> Locale { get; }
+
+    /// <summary>
+    /// Gets the locale of the guild the interaction was sent from.
+    /// </summary>
+    Optional<string> GuildLocale { get; }
 }

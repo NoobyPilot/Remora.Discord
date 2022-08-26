@@ -4,7 +4,7 @@
 //  Author:
 //       Jarl Gullberg <jarl.gullberg@gmail.com>
 //
-//  Copyright (c) 2017 Jarl Gullberg
+//  Copyright (c) Jarl Gullberg
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -30,4 +30,4 @@ namespace Remora.Discord.API.Objects;
 
 /// <inheritdoc cref="IAuditLogChange" />
 [PublicAPI]
-public record AuditLogChange(Optional<object?> NewValue, Optional<object?> OldValue, string Key) : IAuditLogChange;
+public record AuditLogChange(Optional<string> NewValue, Optional<string> OldValue, string Key) : IAuditLogChange;
